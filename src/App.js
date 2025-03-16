@@ -30,6 +30,13 @@ function App() {
   const [recentWinners, setRecentWinners] = useState([]);
   const [eligibleOnly, setEligibleOnly] = useState(false);
   const [updateStatus, setUpdateStatus] = useState({ pending: false, success: null });
+  
+  // 表示設定の状態
+  // ローカルストレージから自動スクロール設定を読み込む（デフォルトは有効）
+  const [autoScrollEnabled, setAutoScrollEnabled] = useState(() => {
+    const savedSetting = localStorage.getItem('autoScrollEnabled');
+    return savedSetting !== null ? savedSetting === 'true' : true;
+  });
 
   // ブラウザID & ユーザーデータの初期化
   useEffect(() => {
@@ -112,6 +119,11 @@ function App() {
 
     initializeData();
   }, []);
+
+  // 設定が変更されたときにローカルストレージに保存
+  useEffect(() => {
+    localStorage.setItem('autoScrollEnabled', autoScrollEnabled.toString());
+  }, [autoScrollEnabled]);
 
   // Firebaseでユーザーを更新する
   const updateUserStep = async (userId, newStep) => {
@@ -304,7 +316,9 @@ function App() {
     getStepColor,
     calculateProgress,
     calculateWinningProbability,
-    currentUser
+    currentUser,
+    autoScrollEnabled,
+    setAutoScrollEnabled
   };
 
   return (

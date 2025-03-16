@@ -8,12 +8,15 @@ import './SettingsPage.css';
 const TABS = {
   RESULTS: 'results',
   INFO: 'info',
-  GIFTS: 'gifts'
+  GIFTS: 'gifts',
+  DISPLAY: 'display'  // 新しい表示設定タブ
 };
 
 function SettingsPage({
   gifts,
-  recentWinners
+  recentWinners,
+  autoScrollEnabled, 
+  setAutoScrollEnabled  // 親コンポーネントから渡される設定変更用の関数
 }) {
   // 現在選択されているタブ (初期値: 抽選結果)
   const [activeTab, setActiveTab] = useState(TABS.RESULTS);
@@ -40,6 +43,8 @@ function SettingsPage({
       setActiveTab(TABS.INFO);
     } else if (hash === 'gifts') {
       setActiveTab(TABS.GIFTS);
+    } else if (hash === 'display') {
+      setActiveTab(TABS.DISPLAY);
     } else {
       setActiveTab(TABS.RESULTS); // デフォルトまたは #results
     }
@@ -49,6 +54,13 @@ function SettingsPage({
   useEffect(() => {
     window.location.hash = activeTab;
   }, [activeTab]);
+
+  // 自動スクロールの切り替え
+  const toggleAutoScroll = () => {
+    setAutoScrollEnabled(!autoScrollEnabled);
+    // ローカルストレージに設定を保存
+    localStorage.setItem('autoScrollEnabled', (!autoScrollEnabled).toString());
+  };
 
   return (
     <div className="settings-container">
@@ -78,6 +90,14 @@ function SettingsPage({
           >
             <i className="tab-icon gifts-icon">🎁</i>
             景品一覧
+          </button>
+          <button 
+            className={`tab-button ${activeTab === TABS.DISPLAY ? 'active' : ''}`}
+            onClick={() => handleTabChange(TABS.DISPLAY)}
+            data-tab="display"
+          >
+            <i className="tab-icon display-icon">⚙️</i>
+            表示設定
           </button>
         </div>
 
@@ -151,6 +171,38 @@ function SettingsPage({
                   景品データがありません
                 </div>
               )}
+            </div>
+          )}
+
+          {/* 表示設定タブ（新規追加） */}
+          {activeTab === TABS.DISPLAY && (
+            <div className="tab-pane display-pane">
+              <h2>表示設定</h2>
+              
+              <div className="settings-section">
+                <h3>ユーザーランキング表示</h3>
+                
+                <div className="setting-item">
+                  <div className="setting-description">
+                    <h4>自動スクロール</h4>
+                    <p>ユーザーランキングを自動的にスクロールするかどうかを設定します。オフにすると、手動でスクロールできます。</p>
+                  </div>
+                  
+                  <div className="setting-control">
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={autoScrollEnabled} 
+                        onChange={toggleAutoScroll}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                    <span className="toggle-status">
+                      {autoScrollEnabled ? '有効' : '無効'}
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
         </div>

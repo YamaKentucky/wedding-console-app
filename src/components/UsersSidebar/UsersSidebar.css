@@ -48,6 +48,15 @@
   scrollbar-width: thin;
 }
 
+/* 手動スクロール時のスタイル調整 */
+.users-list.manual-scroll {
+  cursor: grab;
+}
+
+.users-list.manual-scroll:active {
+  cursor: grabbing;
+}
+
 /* スクロールバースタイル */
 .users-list::-webkit-scrollbar {
   width: 6px;

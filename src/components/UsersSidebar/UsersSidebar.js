@@ -8,14 +8,14 @@ function UsersSidebar({
   getStepText, 
   getStepColor, 
   calculateProgress, 
-  calculateWinningProbability 
+  calculateWinningProbability,
+  autoScrollEnabled // 設定ページから渡される自動スクロール設定
 }) {
   const listRef = useRef(null);
   
   // ユーザーをソート：
   // 1. 進捗（step）の降順でソート
   // 2. 同一進捗内ではユーザー名（sucsessID）でソート
-  // 注: 当選の有無はランキングに影響しない
   const sortedUsers = useMemo(() => {
     return [...users].sort((a, b) => {
       // 進捗（step）で降順ソート
@@ -34,12 +34,12 @@ function UsersSidebar({
     let scrollInterval;
     
     const startAutoScroll = () => {
-      if (!listRef.current) return;
+      if (!listRef.current || !autoScrollEnabled) return;
       
       const scrollContainer = listRef.current;
       const scrollHeight = scrollContainer.scrollHeight;
       const clientHeight = scrollContainer.clientHeight;
-      let currentPos = 0;
+      let currentPos = scrollContainer.scrollTop || 0;
       
       // スクロールが必要ない場合はスクロールしない
       if (scrollHeight <= clientHeight) return;
@@ -57,21 +57,26 @@ function UsersSidebar({
           clearInterval(scrollInterval);
           setTimeout(() => {
             scrollContainer.scrollTop = 0;
-            startAutoScroll();
+            if (autoScrollEnabled) {
+              startAutoScroll();
+            }
           }, 2000);
         }
       }, 50); // スクロール速度を調整（数値が小さいほど速い）
     };
     
-    // 最初にスクロールを開始（少し遅延させる）
-    autoScrollTimer = setTimeout(startAutoScroll, 3000);
+    // 自動スクロールが有効な場合のみスクロールを開始
+    if (autoScrollEnabled) {
+      // 最初にスクロールを開始（少し遅延させる）
+      autoScrollTimer = setTimeout(startAutoScroll, 3000);
+    }
     
-    // コンポーネントのアンマウント時にタイマーとインターバルをクリア
+    // コンポーネントのアンマウント時またはautoScrollEnabledが変更された時にタイマーとインターバルをクリア
     return () => {
       clearTimeout(autoScrollTimer);
       if (scrollInterval) clearInterval(scrollInterval);
     };
-  }, [sortedUsers.length]); // ユーザー数が変わった時だけ再設定
+  }, [sortedUsers.length, autoScrollEnabled]); // ユーザー数または自動スクロール設定が変わった時に再設定
   
   return (
     <div className="users-sidebar">
@@ -79,10 +84,10 @@ function UsersSidebar({
         <h2>謎解き達成ランキング</h2>
         
         <div className="users-list-container">
-          <div className="users-list" ref={listRef}>
+          <div className={`users-list ${!autoScrollEnabled ? 'manual-scroll' : ''}`} ref={listRef}>
             {sortedUsers.map((user, index) => (
               <UserListItem
-                key={`${user.id}`} // インデックスを除いて、IDのみで一意に識別
+                key={`${user.id}`}
                 user={user}
                 isCurrentUser={currentUser && user.id === currentUser.id}
                 isWinner={user.gift === "True"}

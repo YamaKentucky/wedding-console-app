@@ -19,7 +19,8 @@ function HomePage({
   getStepColor,
   calculateProgress,
   calculateWinningProbability,
-  currentUser
+  currentUser,
+  autoScrollEnabled // 表示設定の自動スクロール設定
 }) {
   return (
     <div className="app-container">
@@ -49,6 +50,7 @@ function HomePage({
         getStepColor={getStepColor}
         calculateProgress={calculateProgress}
         calculateWinningProbability={calculateWinningProbability}
+        autoScrollEnabled={autoScrollEnabled} // 自動スクロール設定を渡す
       />
     </div>
   );
