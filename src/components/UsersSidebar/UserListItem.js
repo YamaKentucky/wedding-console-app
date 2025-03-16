@@ -15,26 +15,26 @@ function UserListItem({
 }) {
   const winningProb = calculateWinningProbability(user.step, totalUsers);
   
-  // 成功時間をフォーマットする関数
-  const formatSuccessTime = (timeString) => {
-    if (!timeString) return null;
+  // // 成功時間をフォーマットする関数
+  // const formatSuccessTime = (timeString) => {
+  //   if (!timeString) return null;
     
-    try {
-      const date = new Date(timeString);
+  //   try {
+  //     const date = new Date(timeString);
       
-      // 日本時間のフォーマット
-      return new Intl.DateTimeFormat('ja-JP', { 
-        month: 'numeric', 
-        day: 'numeric',
-        hour: '2-digit', 
-        minute: '2-digit',
-        hour12: false
-      }).format(date);
-    } catch (e) {
-      console.error('Invalid date format:', e);
-      return null;
-    }
-  };
+  //     // 日本時間のフォーマット
+  //     return new Intl.DateTimeFormat('ja-JP', { 
+  //       month: 'numeric', 
+  //       day: 'numeric',
+  //       hour: '2-digit', 
+  //       minute: '2-digit',
+  //       hour12: false
+  //     }).format(date);
+  //   } catch (e) {
+  //     console.error('Invalid date format:', e);
+  //     return null;
+  //   }
+  // };
   
   // ランク1～3までは特別なクラスを追加
   const getRankIconClass = (rank) => {

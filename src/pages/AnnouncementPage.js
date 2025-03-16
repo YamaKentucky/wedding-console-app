@@ -210,9 +210,9 @@ const markGiftAsUsed = async (rank) => {
           </div>
           <div className="gift-details">
             <h4>景品: {gift ? gift.name : "未設定"}</h4>
-            {gift && (
+            {/* {gift && (
               <p className="gift-stock">残り: {Math.max(0, gift.stock - (rank <= topRankedUsers.length ? 1 : 0))}個</p>
-            )}
+            )} */}
           </div>
         </div>
       </div>
