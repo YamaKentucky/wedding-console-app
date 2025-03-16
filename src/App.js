@@ -11,7 +11,6 @@ function App() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  // const [setBrowserId] = useState('');
   const [currentUser, setCurrentUser] = useState(null);
   
   // 抽選関連の状態
@@ -20,14 +19,10 @@ function App() {
   const [recentWinners, setRecentWinners] = useState([]);
   const [eligibleOnly, setEligibleOnly] = useState(false);
   const [updateStatus, setUpdateStatus] = useState({ pending: false, success: null });
-  
-  // スクロール用のref
-  const usersListRef = useRef(null);
 
   // ブラウザID & ユーザーデータの初期化
   useEffect(() => {
     const browser_id = getBrowserUserId();
-    // setBrowserId(browser_id);
     
     setLoading(true);
     
@@ -89,36 +84,6 @@ function App() {
 
     initializeData();
   }, []);
-  
-  // 参加者リストの自動スクロール
-  useEffect(() => {
-    if (!usersListRef.current || users.length <= 3) return;
-    
-    let animationId;
-    let startTime;
-    const scrollDuration = 80000; // スクロールにかける時間（ミリ秒）
-    const listHeight = usersListRef.current.scrollHeight;
-    
-    const scrollLoop = (timestamp) => {
-      if (!startTime) startTime = timestamp;
-      const elapsedTime = timestamp - startTime;
-      
-      // スクロール位置を計算
-      const scrollPosition = (elapsedTime % scrollDuration) / scrollDuration * listHeight;
-      
-      if (usersListRef.current) {
-        usersListRef.current.scrollTop = scrollPosition;
-      }
-      
-      animationId = requestAnimationFrame(scrollLoop);
-    };
-    
-    animationId = requestAnimationFrame(scrollLoop);
-    
-    return () => {
-      cancelAnimationFrame(animationId);
-    };
-  }, [users]);
 
   // Firebaseでユーザーを更新する
   const updateUserStep = async (userId, newStep) => {
@@ -252,6 +217,9 @@ function App() {
     return <div className="container error">{error}</div>;
   }
 
+  // CSSマーキーアニメーション用に、データを2セット用意
+  const displayUsers = [...users, ...users];
+
   return (
     <div className="App">
       <header className="App-header">
@@ -377,9 +345,8 @@ function App() {
             <h2>参加者一覧</h2>
             
             <div className="users-list-container">
-              <div className="users-list" ref={usersListRef}>
-                {/* データを二回繰り返して表示することでループ効果を強化 */}
-                {[...users, ...users].map((user, index) => (
+              <div className="users-list">
+                {displayUsers.map((user, index) => (
                   <div key={`${user.id}-${index}`} className={`user-list-item ${currentUser && user.id === currentUser.id ? 'current-user-item' : ''}`}>
                     <div className="user-item-header">
                       <div className="user-avatar">{user.avatar}</div>
