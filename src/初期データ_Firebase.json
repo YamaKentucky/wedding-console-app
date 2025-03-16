@@ -1,14 +1,14 @@
 {
     "users": {
         "user001": {
-            "browserId":"browser_7e8e1af1",
-            "gift":"True",
-            "name":"桑原さん",
-            "primaryID":1,
-            "secoundaryID":123,
-            "step":3,
-            "successTime":"2025-03-16T09:52:24.943Z",
-            "sucsessID":"くわはらさん"
+            "browserId": "browser_7e8e1af1",
+            "gift": "True",
+            "name": "桑原さん",
+            "primaryID": 1,
+            "secoundaryID": 123,
+            "step": 3,
+            "successTime": "2025-03-16T09:52:24.943Z",
+            "sucsessID": "くわはらさん"
         },
         "user002": {
             "name": "大谷さん",
@@ -258,22 +258,39 @@
     },
     "gifts": {
         "gift001": {
-            "name": "ランドリーセット",
-            "price": 6400,
+            "name": "良い焼肉が食べたくなったら使ってね、叙々苑商品券",
+            "price": 10000,
             "stock": 1,
-            "imgKey":"01_SHIRO_homeSet.webp"
+            "imgKey": "01_叙々苑_商品券.jpg",
+            "url": "https://www.jojoen.co.jp/"
         },
         "gift002": {
-            "name": "柔軟剤",
-            "price": 200,
-            "stock": 10,
-            "imgKey":"スクリーンショット 2024-10-05 130709.png"
+            "name": "買わんけどもらったら嬉しいランドリーセット",
+            "price": 6400,
+            "stock": 1,
+            "imgKey": "02_SHIRO_ランドリーセット.webp",
+            "url": "https://shiro-shiro.jp/item/12935.html?category_from=364"
         },
         "gift003": {
-            "name": "お肉",
-            "price": 300,
-            "stock": 10,
-            "imgKey":"スクリーンショット 2024-10-05 130709.png"
+            "name": "思い出の味鳥なご",
+            "price": 6600,
+            "stock": 1,
+            "imgKey": "03_鳥なごセット.jpg",
+            "url": "https://www.torinagoshop.com/"
+        },
+        "gift004": {
+            "name": "祐里佳セレクトだしギフト",
+            "price": 3000,
+            "stock": 1,
+            "imgKey": "04_鰹だしギフト.webp",
+            "url": "https://tanp.jp/products/view/17561?utm_source=google&utm_medium=cpc&utm_campaign=p-max_wedding&gad_source=1&gclid=Cj0KCQjw7dm-BhCoARIsALFk4v_LrCqce8FKJnwoLqbezoyngVHnZ0aUYCt5RcXzKoIyz1Qtfs9aJFoaAq8uEALw_wcB"
+        },
+        "gift005": {
+            "name": "予定調和のスタバカード",
+            "price": 2000,
+            "stock": 1,
+            "imgKey": "05_Starbucks_商品券.png",
+            "url": "https://tanp.jp/products/view/17561?utm_source=google&utm_medium=cpc&utm_campaign=p-max_wedding&gad_source=1&gclid=Cj0KCQjw7dm-BhCoARIsALFk4v_LrCqce8FKJnwoLqbezoyngVHnZ0aUYCt5RcXzKoIyz1Qtfs9aJFoaAq8uEALw_wcB"
         }
     }
 }
