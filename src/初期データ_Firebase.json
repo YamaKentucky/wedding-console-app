@@ -1,11 +1,14 @@
 {
     "users": {
         "user001": {
-            "name": "桑原さん",
-            "primaryID": 1,
-            "secoundaryID": 1,
-            "step": 0,
-            "sucsessID": "くわはらさん"
+            "browserId":"browser_7e8e1af1",
+            "gift":"True",
+            "name":"桑原さん",
+            "primaryID":1,
+            "secoundaryID":123,
+            "step":3,
+            "successTime":"2025-03-16T09:52:24.943Z",
+            "sucsessID":"くわはらさん"
         },
         "user002": {
             "name": "大谷さん",

@@ -10,9 +10,31 @@ function UserListItem({
   calculateWinningProbability,
   totalUsers,
   hideRank = false,
-  completedRank
+  completedRank,
+  successTime
 }) {
   const winningProb = calculateWinningProbability(user.step, totalUsers);
+  
+  // 成功時間をフォーマットする関数
+  const formatSuccessTime = (timeString) => {
+    if (!timeString) return null;
+    
+    try {
+      const date = new Date(timeString);
+      
+      // 日本時間のフォーマット
+      return new Intl.DateTimeFormat('ja-JP', { 
+        month: 'numeric', 
+        day: 'numeric',
+        hour: '2-digit', 
+        minute: '2-digit',
+        hour12: false
+      }).format(date);
+    } catch (e) {
+      console.error('Invalid date format:', e);
+      return null;
+    }
+  };
   
   // ランク1～3までは特別なクラスを追加
   const getRankIconClass = (rank) => {
@@ -22,8 +44,15 @@ function UserListItem({
     return 'rank-icon';
   };
   
+  const formattedTime = formatSuccessTime(successTime);
+  const isCompleted = user.step === 3; // 達成者かどうか
+  
   return (
-    <div className={`user-list-item ${isCurrentUser ? 'current-user-item' : ''} ${isWinner ? 'winner-item' : ''}`}>
+    <div className={`user-list-item 
+      ${isCurrentUser ? 'current-user-item' : ''} 
+      ${isWinner ? 'winner-item' : ''} 
+      ${isCompleted ? 'completed-user' : ''}`}
+    >
       <div className="user-item-header">
         {/* 謎解き達成者（step=3）の場合にランクアイコンを表示 */}
         {completedRank && (
@@ -32,8 +61,12 @@ function UserListItem({
         <div className="user-info">
           <div className="user-name">
             {user.sucsessID}
-            {isWinner && <span className="winner-badge">当選者</span>}
+            {/* {isWinner && <span className="winner-badge">当選者</span>} */}
           </div>
+          {/* 成功時間がある場合のみ表示 */}
+          {/* {formattedTime && (
+            <div className="success-time">達成: {formattedTime}</div>
+          )} */}
         </div>
         <div className="winning-chance">{winningProb}%</div>
       </div>

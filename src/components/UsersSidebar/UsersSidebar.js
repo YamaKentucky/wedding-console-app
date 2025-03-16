@@ -13,12 +13,17 @@ function UsersSidebar({
 }) {
   const listRef = useRef(null);
   
-  // 謎解きを達成した人のランキングを計算
+  // 謎解きを達成した人のランキングを計算（成功時間順）
   const completedRanking = useMemo(() => {
-    // step = 3の人だけを抽出し、名前でソート
+    // step = 3の人だけを抽出し、成功時間でソート
     const completedUsers = [...users]
-      .filter(user => user.step === 3)
-      .sort((a, b) => a.sucsessID?.localeCompare(b.sucsessID) || 0);
+      .filter(user => user.step === 3 && user.successTime)
+      .sort((a, b) => {
+        // 成功時間が早い順にソート
+        const timeA = new Date(a.successTime || '9999-12-31');
+        const timeB = new Date(b.successTime || '9999-12-31');
+        return timeA - timeB;
+      });
       
     // 順位をマップに保存 {userId: rank}
     const rankMap = {};
@@ -30,10 +35,22 @@ function UsersSidebar({
   }, [users]);
   
   // ユーザーをソート：
-  // 1. 進捗（step）の降順でソート
-  // 2. 同一進捗内ではユーザー名（sucsessID）でソート
+  // 1. 謎解き達成者（step=3）を成功時間順で優先表示
+  // 2. 未達成者は進捗度順
   const sortedUsers = useMemo(() => {
-    return [...users].sort((a, b) => {
+    // 達成者（step=3かつsuccessTimeがある）と未達成者に分割
+    const completed = users.filter(user => user.step === 3 && user.successTime);
+    const others = users.filter(user => !(user.step === 3 && user.successTime));
+    
+    // 達成者を成功時間順にソート
+    const sortedCompleted = [...completed].sort((a, b) => {
+      const timeA = new Date(a.successTime || '9999-12-31');
+      const timeB = new Date(b.successTime || '9999-12-31');
+      return timeA - timeB;
+    });
+    
+    // 未達成者を進捗（step）の降順、同一進捗内では名前順にソート
+    const sortedOthers = [...others].sort((a, b) => {
       // 進捗（step）で降順ソート
       if (b.step !== a.step) {
         return b.step - a.step;
@@ -42,6 +59,9 @@ function UsersSidebar({
       // 進捗が同じ場合は名前でソート（昇順）
       return a.sucsessID?.localeCompare(b.sucsessID) || 0;
     });
+    
+    // 達成者を先頭に、未達成者をその後ろに配置して返す
+    return [...sortedCompleted, ...sortedOthers];
   }, [users]);
   
   // 自動スクロール機能
@@ -112,8 +132,9 @@ function UsersSidebar({
                 calculateProgress={calculateProgress}
                 calculateWinningProbability={calculateWinningProbability}
                 totalUsers={users.length}
-                hideRank={true} // 通常のランキングは非表示
-                completedRank={user.step === 3 ? completedRanking[user.id] : null} // 達成者のみランクを表示
+                hideRank={true}
+                completedRank={user.step === 3 && user.successTime ? completedRanking[user.id] : null}
+                successTime={user.successTime}
               />
             ))}
           </div>

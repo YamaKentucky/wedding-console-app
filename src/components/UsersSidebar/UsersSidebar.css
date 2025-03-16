@@ -353,3 +353,28 @@
   color: #3e2723;
   box-shadow: 0 2px 6px rgba(141, 110, 99, 0.4);
 }
+
+/* 成功時間の表示スタイル */
+.success-time {
+  font-size: 0.75rem;
+  color: #666;
+  margin-top: 0.2rem;
+}
+
+/* ユーザー情報のレイアウト調整 */
+.user-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+/* 達成者クラスを JavaScript 側でつける */
+.completed-user {
+  border-left: 4px solid #512da8;
+  background-color: #f5f2ff;
+}
+
+/* ランキングアイコンのスタイル微調整 */
+.rank-icon {
+  min-width: 30px;
+}
