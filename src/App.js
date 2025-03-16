@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { firebaseService } from './firebase';
 import { getBrowserUserId, getSavedPrimaryId } from './utils/browserIdentity';
 import { getStepText, getStepColor, calculateWinningProbability, calculateProgress } from './utils/lotteryUtils';
 
 // Import components
 import Header from './components/Header/Header';
-import LotterySection from './components/LotterySection/LotterySection';
-import UsersSidebar from './components/UsersSidebar/UsersSidebar';
+
+// Import pages
+import HomePage from './pages/HomePage';
+import SettingsPage from './pages/SettingsPage';
 
 // Import styles
 import './App.css';
@@ -283,38 +286,44 @@ function App() {
     return <div className="container error">{error}</div>;
   }
 
+  // 各ページに渡す共通のプロップス
+  const commonProps = {
+    users,
+    gifts,
+    winner,
+    selectedGift,
+    recentWinners,
+    eligibleOnly,
+    setEligibleOnly,
+    isSpinningUser,
+    isSpinningGift,
+    updateStatus,
+    startUserLottery,
+    startGiftLottery,
+    getStepText,
+    getStepColor,
+    calculateProgress,
+    calculateWinningProbability,
+    currentUser
+  };
+
   return (
-    <div className="App">
-      <Header />
-      
-      <div className="app-container">
-        <LotterySection
-          users={users}
-          gifts={gifts}
-          winner={winner}
-          selectedGift={selectedGift}
-          recentWinners={recentWinners}
-          eligibleOnly={eligibleOnly}
-          setEligibleOnly={setEligibleOnly}
-          isSpinningUser={isSpinningUser}
-          isSpinningGift={isSpinningGift}
-          updateStatus={updateStatus}
-          startUserLottery={startUserLottery}
-          startGiftLottery={startGiftLottery}
-          getStepText={getStepText}
-          getStepColor={getStepColor}
-        />
+    <Router>
+      <div className="App">
+        <Header />
         
-        <UsersSidebar
-          users={users}
-          currentUser={currentUser}
-          getStepText={getStepText}
-          getStepColor={getStepColor}
-          calculateProgress={calculateProgress}
-          calculateWinningProbability={calculateWinningProbability}
-        />
+        <Routes>
+          <Route 
+            path="/" 
+            element={<HomePage {...commonProps} />} 
+          />
+          <Route 
+            path="/settings" 
+            element={<SettingsPage {...commonProps} />} 
+          />
+        </Routes>
       </div>
-    </div>
+    </Router>
   );
 }
 

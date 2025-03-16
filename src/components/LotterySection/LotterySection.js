@@ -22,14 +22,16 @@ function LotterySection({
   startUserLottery,
   startGiftLottery,
   getStepText,
-  getStepColor
+  getStepColor,
+  // メインページでは詳細情報をを表示しない（設定ページに移動）
+  showDetailsInMain = false
 }) {
   return (
     <div className="lottery-section">
       {/* メイン抽選パネル */}
       <div className="panel lottery-panel">
         <h2>ラッキードロー</h2>
-        
+
         <div className="lottery-content">
           <div className="lottery-row">
             {/* 当選者グループ */}
@@ -40,7 +42,7 @@ function LotterySection({
                 getStepText={getStepText}
                 getStepColor={getStepColor}
               />
-              
+
               <div className="lottery-button-container">
                 <LotteryControls
                   startUserLottery={startUserLottery}
@@ -54,7 +56,7 @@ function LotterySection({
                 />
               </div>
             </div>
-            
+
             {/* 景品グループ */}
             <div className="lottery-group gift-group">
               <GiftDisplay
@@ -62,7 +64,7 @@ function LotterySection({
                 isSpinningGift={isSpinningGift}
                 winner={winner}
               />
-              
+
               <div className="lottery-button-container">
                 <LotteryControls
                   startUserLottery={startUserLottery}
@@ -78,29 +80,34 @@ function LotterySection({
             </div>
           </div>
         </div>
-        
+
         <UpdateStatus updateStatus={updateStatus} />
       </div>
-      
-      {/* 抽選結果履歴パネル（独立したセクションとして配置） */}
-      {recentWinners.length > 0 && (
-        <div className="panel results-panel">
-          <h2>抽選結果履歴</h2>
-          <RecentWinners recentWinners={recentWinners} />
-        </div>
+
+      {/* 以下のパネルはshowDetailsInMainがtrueの場合のみ表示（メインページでは表示しない） */}
+      {showDetailsInMain && (
+        <>
+          {/* 抽選結果履歴パネル */}
+          {recentWinners.length > 0 && (
+            <div className="panel results-panel">
+              <h2>抽選結果履歴</h2>
+              <RecentWinners recentWinners={recentWinners} />
+            </div>
+          )}
+
+          {/* 情報パネル */}
+          <div className="panel info-panel">
+            <h2>抽選情報</h2>
+            <LotteryInfo />
+          </div>
+
+          {/* ギフトパネル */}
+          <div className="panel gifts-panel">
+            <h2>景品一覧</h2>
+            <GiftList gifts={gifts} />
+          </div>
+        </>
       )}
-      
-      {/* 情報パネル */}
-      <div className="panel info-panel">
-        <h2>抽選情報</h2>
-        <LotteryInfo />
-      </div>
-      
-      {/* ギフトパネル */}
-      <div className="panel gifts-panel">
-        <h2>景品一覧</h2>
-        <GiftList gifts={gifts} />
-      </div>
     </div>
   );
 }
