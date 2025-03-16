@@ -1,468 +1,457 @@
+/* パネルレイアウト */
+.lottery-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* 共通パネルスタイル */
+.lottery-panel,
+.info-panel,
+.gifts-panel,
+.results-panel {
+  height: 600px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* スクロールバースタイル */
+.lottery-panel::-webkit-scrollbar,
+.info-panel::-webkit-scrollbar,
+.gifts-panel::-webkit-scrollbar,
+.results-panel::-webkit-scrollbar,
+.winners-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.lottery-panel::-webkit-scrollbar-thumb,
+.info-panel::-webkit-scrollbar-thumb,
+.gifts-panel::-webkit-scrollbar-thumb,
+.results-panel::-webkit-scrollbar-thumb,
+.winners-list::-webkit-scrollbar-thumb {
+  background-color: #d0d0d0;
+  border-radius: 3px;
+}
+
+.lottery-panel::-webkit-scrollbar-track,
+.info-panel::-webkit-scrollbar-track,
+.gifts-panel::-webkit-scrollbar-track,
+.results-panel::-webkit-scrollbar-track,
+.winners-list::-webkit-scrollbar-track {
+  background-color: #f5f5f5;
+}
+
+/* パネル固有スタイル */
+.lottery-panel {
+  text-align: center;
+}
+
+.info-panel,
+.gifts-panel {
+  text-align: left;
+}
+
+.results-panel {
+  background-color: #fff;
+  text-align: left;
+  border-left: 4px solid #9c27b0;
+}
+
+.results-panel h2::after {
+  background: linear-gradient(90deg, #9c27b0, #e040fb);
+}
+
+/* 抽選コンテンツレイアウト */
+.lottery-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  flex-grow: 1;
+}
+
+.lottery-row {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin: 1.5rem 0;
+  width: 100%;
+  max-width: 800px;
+}
+
+/* 抽選グループ */
+.lottery-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 300px;
+}
+
+.user-group, .gift-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* ボタンコンテナ */
+.lottery-button-container {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.lottery-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+/* ボタンスタイル */
+.lottery-btn {
+  width: 100%;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  border-radius: 30px;
+  transform: translateY(0);
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  font-weight: bold;
+  margin: 0 auto;
+}
+
+.user-lottery-btn {
+  background-image: linear-gradient(135deg, #43a047 0%, #2e7d32 100%);
+}
+
+.user-lottery-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  background-image: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+}
+
+.gift-lottery-btn {
+  background-image: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+}
+
+.gift-lottery-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  background-image: linear-gradient(135deg, #f57c00 0%, #ef6c00 100%);
+}
+
+.lottery-btn:disabled {
+  background-image: none;
+  opacity: 0.5;
+  transform: translateY(0);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* 表示コンテナ */
+.winner-display, .gift-display {
+  width: 100%;
+}
+
+.winner-container, .gift-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+/* カードスタイル共通 */
+.winner-card, .gift-card, .no-winner-message, .no-gift-message {
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+  background-color: #fff;
+  width: 100%;
+  height: 250px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+/* 当選カードスタイル */
+.winner-card, .gift-card {
+  border: none;
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.07);
+  transition: all 0.3s ease;
+}
+
+.winner-card.spinning, .gift-card.spinning {
+  animation: pulse 1s infinite alternate;
+}
+
+@keyframes pulse {
+  from { box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05); }
+  to { box-shadow: 0 8px 25px rgba(63, 81, 181, 0.35); }
+}
+
+/* 未選択状態メッセージ */
+.no-winner-message, .no-gift-message {
+  border: 2px dashed #e0e0e0;
+  color: #666;
+  font-size: 1.1rem;
+  background-color: #fafafa;
+}
+
+/* アバターとアイコン */
+.winner-avatar, .gift-icon {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.2rem;
+}
+
+.winner-avatar {
+  background-image: linear-gradient(135deg, #3f51b5, #9c27b0);
+  color: white;
+  border-radius: 50%;
+  font-size: 2.5rem;
+  font-weight: bold;
+  box-shadow: 0 5px 15px rgba(124, 77, 255, 0.3);
+}
+
+.gift-icon {
+  font-size: 3.5rem;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* テキスト表示 */
+.winner-name, .gift-name {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.winner-id {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 1.2rem;
+}
+
+.gift-price {
+  font-size: 1.1rem;
+  color: #f57c00;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.gift-stock {
+  font-size: 0.9rem;
+  color: #666;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  background-color: #f1f1f1;
+  display: inline-block;
+}
+
+/* 当選者リスト */
+.winners-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  max-height: 500px;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+.winner-list-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  text-align: left;
+  transition: transform 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.winner-list-item:hover {
+  transform: translateX(5px);
+  background-color: #f5f5f5;
+}
+
+.winner-mini-avatar {
+  width: 36px;
+  height: 36px;
+  background-image: linear-gradient(135deg, #3f51b5, #9c27b0);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-right: 0.75rem;
+  font-size: 1rem;
+}
+
+.winner-info {
+  flex: 1;
+}
+
+.winner-mini-name {
+  font-weight: 600;
+}
+
+.winner-mini-id {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.winner-gift {
+  display: flex;
+  align-items: center;
+  background-color: #fff3e0;
+  padding: 0.3rem 0.6rem;
+  border-radius: 20px;
+  margin-left: 0.5rem;
+}
+
+.gift-emoji {
+  margin-right: 0.25rem;
+}
+
+/* 当選確率表 */
+.lottery-info {
+  text-align: left;
+  background-color: #f8f9fa;
+  padding: 1.2rem;
+  border-radius: 12px;
+  border-left: 4px solid #7e57c2;
+}
+
+.lottery-info p {
+  margin-bottom: 1rem;
+}
+
+.probability-table {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #eee;
+}
+
+.prob-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid #eee;
+  background-color: white;
+}
+
+.prob-row:last-child {
+  border-bottom: none;
+}
+
+.prob-header {
+  background-color: #f0f0f0;
+  font-weight: bold;
+}
+
+.prob-status {
+  font-size: 0.85rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 20px;
+  font-weight: 500;
+  display: inline-block;
+}
+
+/* 景品一覧 */
+.gift-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.gift-list-item {
+  padding: 1rem;
+  border-radius: 8px;
+  background-color: #fff;
+  border-left: 4px solid #ff9800;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.gift-list-icon {
+  font-size: 1.8rem;
+  margin-right: 0.75rem;
+}
+
+.gift-list-info {
+  flex: 1;
+}
+
+.gift-list-name {
+  font-weight: 600;
+}
+
+.gift-list-price {
+  font-size: 0.9rem;
+  color: #f57c00;
+}
+
+.gift-list-stock {
+  padding: 0.2rem 0.5rem;
+  border-radius: 20px;
+  background-color: #e8f5e9;
+  color: #388e3c;
+  font-size: 0.85rem;
+}
+
+.gift-list-stock.out-of-stock {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+/* 更新ステータス */
+.update-status {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.update-status.pending {
+  background-color: #e3f2fd;
+  color: #1565c0;
+  animation: pulse 1.5s infinite;
+}
+
+.update-status.success {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.update-status.error {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+/* レスポンシブデザイン */
 @media (max-width: 650px) {
-    .lottery-row {
-      flex-direction: column;
-      align-items: center;
-    }
-    
-    .lottery-group {
-      width: 300px;
-      margin-bottom: 2rem;
-    }
-    
-    .winner-card, .gift-card, .no-winner-message, .no-gift-message {
-      height: auto;
-      min-height: 180px;
-    }
-  }.lottery-content {
-    display: flex;
+  .lottery-row {
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    width: 100%;
-  }
-  
-  .lottery-row {
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    margin: 1.5rem 0;
-    width: 100%;
-    max-width: 800px;
   }
   
   .lottery-group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     width: 300px;
+    margin-bottom: 2rem;
   }
   
-  .user-group, .gift-group {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+  .winner-card, .gift-card, .no-winner-message, .no-gift-message {
+    height: auto;
+    min-height: 180px;
   }
-  
-  .lottery-button-container {
-    width: 100%;
-    margin-top: 1rem;
-  }.winner-container, .gift-container {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-  }.winners-list::-webkit-scrollbar {
-    width: 5px;
-  }
-  
-  .winners-list::-webkit-scrollbar-thumb {
-    background-color: #d0d0d0;
-    border-radius: 3px;
-  }
-  
-  .winners-list::-webkit-scrollbar-track {
-    background-color: #f5f5f5;
-  }.results-panel {
-    background-color: #fff;
-    text-align: left;
-    border-left: 4px solid #9c27b0;
-  }
-  
-  .results-panel h2::after {
-    background: linear-gradient(90deg, #9c27b0, #e040fb);
-  }/* パネルレイアウト */
-  .lottery-section {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-  
-  /* 抽選コントロール */
-  .lottery-panel {
-    text-align: center;
-    height: 600px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .lottery-panel::-webkit-scrollbar {
-    width: 6px;
-  }
-  
-  .lottery-panel::-webkit-scrollbar-thumb {
-    background-color: #d0d0d0;
-    border-radius: 3px;
-  }
-  
-  .lottery-panel::-webkit-scrollbar-track {
-    background-color: #f5f5f5;
-  }
-  
-  .info-panel,
-  .gifts-panel {
-    text-align: left;
-  }
-  
-  .lottery-controls {
-    margin-bottom: 1.5rem;
-    background-color: #f8f9fa;
-    padding: 1.2rem;
-    border-radius: 8px;
-  }
-  
-  .eligibility-filter {
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-  }
-  
-  .lottery-controls-container {
-    margin: 1.5rem auto;
-    padding-top: 1rem;
-    border-top: 1px solid #eee;
-    text-align: center;
-    max-width: 500px;
-  }
-  
-  .lottery-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 1.5rem;
-    flex-wrap: wrap;
-  }
-  
-  .lottery-btn {
-    width: 100%;
-    padding: 1rem 2rem;
-    font-size: 1.1rem;
-    border-radius: 30px;
-    transform: translateY(0);
-    transition: all 0.2s ease;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    font-weight: bold;
-    margin: 0 auto;
-  }
-  
-  .user-lottery-btn {
-    background-image: linear-gradient(135deg, #43a047 0%, #2e7d32 100%);
-  }
-  
-  .user-lottery-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-    background-image: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
-  }
-  
-  .gift-lottery-btn {
-    background-image: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
-  }
-  
-  .gift-lottery-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-    background-image: linear-gradient(135deg, #f57c00 0%, #ef6c00 100%);
-  }
-  
-  .lottery-btn:disabled {
-    background-image: none;
-    opacity: 0.5;
-    transform: translateY(0);
-    box-shadow: none;
-    cursor: not-allowed;
-  }
-  
-  /* 抽選結果表示 */
-  .lottery-results {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 2rem;
-    margin: 1.5rem auto;
-    max-width: 700px;
-  }
-  
-  .winner-display, .gift-display {
-    width: 100%;
-  }
-  
-  /* 当選者表示 */
-  .winner-card, .gift-card {
-    border: none;
-    border-radius: 12px;
-    padding: 1.5rem;
-    text-align: center;
-    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.07);
-    background-color: #fff;
-    transition: all 0.3s ease;
-    height: 220px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .winner-card.spinning, .gift-card.spinning {
-    animation: pulse 1s infinite alternate;
-  }
-  
-  @keyframes pulse {
-    from { box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05); }
-    to { box-shadow: 0 8px 25px rgba(63, 81, 181, 0.35); }
-  }
-  
-  .winner-avatar {
-    width: 80px;
-    height: 80px;
-    background-image: linear-gradient(135deg, #3f51b5, #9c27b0);
-    color: white;
-    border-radius: 50%;
-    margin: 0 auto 1.2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2.5rem;
-    font-weight: bold;
-    box-shadow: 0 5px 15px rgba(124, 77, 255, 0.3);
-  }
-  
-  .winner-name, .gift-name {
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-    color: #333;
-  }
-  
-  .winner-id {
-    font-size: 1rem;
-    color: #666;
-    margin-bottom: 1.2rem;
-  }
-  
-  .gift-icon {
-    font-size: 3.5rem;
-    margin-bottom: 1rem;
-    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .gift-price {
-    font-size: 1.1rem;
-    color: #f57c00;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-  }
-  
-  .gift-stock {
-    font-size: 0.9rem;
-    color: #666;
-    padding: 0.3rem 0.8rem;
-    border-radius: 20px;
-    background-color: #f1f1f1;
-    display: inline-block;
-  }
-  
-  .no-winner-message, .no-gift-message {
-    padding: 2rem 1.5rem;
-    border: 2px dashed #e0e0e0;
-    border-radius: 12px;
-    color: #666;
-    font-size: 1.1rem;
-    background-color: #fafafa;
-    height: 220px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-  }
-  
-  /* 過去の当選者リスト */
-  .winners-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.7rem;
-    max-height: 300px;
-    overflow-y: auto;
-    padding-right: 5px;
-  }
-  
-  .winner-list-item {
-    display: flex;
-    align-items: center;
-    padding: 0.75rem;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    text-align: left;
-    transition: transform 0.2s ease;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-  }
-  
-  .winner-list-item:hover {
-    transform: translateX(5px);
-    background-color: #f5f5f5;
-  }
-  
-  .winner-mini-avatar {
-    width: 36px;
-    height: 36px;
-    background-image: linear-gradient(135deg, #3f51b5, #9c27b0);
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    margin-right: 0.75rem;
-    font-size: 1rem;
-  }
-  
-  .winner-info {
-    flex: 1;
-  }
-  
-  .winner-mini-name {
-    font-weight: 600;
-  }
-  
-  .winner-mini-id {
-    font-size: 0.85rem;
-    color: #666;
-  }
-  
-  .winner-gift {
-    display: flex;
-    align-items: center;
-    background-color: #fff3e0;
-    padding: 0.3rem 0.6rem;
-    border-radius: 20px;
-    margin-left: 0.5rem;
-  }
-  
-  .gift-emoji {
-    margin-right: 0.25rem;
-  }
-  
-  /* 景品一覧 */
-  .gift-list-section {
-    margin-top: 2rem;
-    text-align: left;
-  }
-  
-  .gift-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 1rem;
-  }
-  
-  .gift-list-item {
-    padding: 1rem;
-    border-radius: 8px;
-    background-color: #fff;
-    border-left: 4px solid #ff9800;
-    display: flex;
-    align-items: center;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  }
-  
-  .gift-list-icon {
-    font-size: 1.8rem;
-    margin-right: 0.75rem;
-  }
-  
-  .gift-list-info {
-    flex: 1;
-  }
-  
-  .gift-list-name {
-    font-weight: 600;
-  }
-  
-  .gift-list-price {
-    font-size: 0.9rem;
-    color: #f57c00;
-  }
-  
-  .gift-list-stock {
-    padding: 0.2rem 0.5rem;
-    border-radius: 20px;
-    background-color: #e8f5e9;
-    color: #388e3c;
-    font-size: 0.85rem;
-  }
-  
-  .gift-list-stock.out-of-stock {
-    background-color: #ffebee;
-    color: #c62828;
-  }
-  
-  /* 当選確率表 */
-  .lottery-info {
-    text-align: left;
-    background-color: #f8f9fa;
-    padding: 1.2rem;
-    border-radius: 12px;
-    border-left: 4px solid #7e57c2;
-  }
-  
-  .lottery-info p {
-    margin-bottom: 1rem;
-  }
-  
-  .probability-table {
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    border: 1px solid #eee;
-  }
-  
-  .prob-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 0.7rem 1rem;
-    border-bottom: 1px solid #eee;
-    background-color: white;
-  }
-  
-  .prob-row:last-child {
-    border-bottom: none;
-  }
-  
-  .prob-header {
-    background-color: #f0f0f0;
-    font-weight: bold;
-  }
-  
-  .prob-status {
-    font-size: 0.85rem;
-    padding: 0.2rem 0.5rem;
-    border-radius: 20px;
-    font-weight: 500;
-    display: inline-block;
-  }
-  
-  /* 更新ステータス */
-  .update-status {
-    margin-top: 1rem;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    text-align: center;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  .update-status.pending {
-    background-color: #e3f2fd;
-    color: #1565c0;
-    animation: pulse 1.5s infinite;
-  }
-  
-  .update-status.success {
-    background-color: #e8f5e9;
-    color: #2e7d32;
-  }
-  
-  .update-status.error {
-    background-color: #ffebee;
-    color: #c62828;
-  }
+}
