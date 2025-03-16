@@ -208,48 +208,55 @@
     display: flex;
     align-items: center;
     background-color: rgba(255, 255, 255, 0.7);
-    padding: 0.8rem;
+    padding: 1rem;
     border-radius: 8px;
     margin-left: 1rem;
+    min-width: 280px;
   }
   
   .gift-icon {
     font-size: 2.5rem;
     margin-right: 1rem;
-    width: 60px;
-    height: 60px;
+    width: 100px;
+    height: 100px;
     display: flex;
     align-items: center;
     justify-content: center;
   }
   
   .gift-image {
-    width: 60px;
-    height: 60px;
+    width: 100px;
+    height: 100px;
     object-fit: cover;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+  
+  .gift-image:hover {
+    transform: scale(1.05);
   }
   
   .gift-emoji {
-    font-size: 2.5rem;
+    font-size: 3.5rem;
   }
   
   .gift-details {
     text-align: left;
+    flex: 1;
   }
   
   .gift-details h4 {
     margin: 0;
-    margin-bottom: 0.3rem;
-    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
   }
   
-  .gift-price {
-    color: #f57c00;
+  .gift-stock {
     font-weight: 500;
     margin: 0;
-    font-size: 0.9rem;
+    font-size: 1rem;
+    color: #43a047;
   }
   
   .announcement-controls {

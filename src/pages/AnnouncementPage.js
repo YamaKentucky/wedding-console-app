@@ -24,23 +24,90 @@ function AnnouncementPage({ users, gifts }) {
     return completedUsers.slice(0, 3);
   }, [users]);
 
+  // 景品の使用状況を更新する関数
+  const markGiftAsUsed = async (rank) => {
+    if (step <= rank) return; // まだその順位を発表していない場合は何もしない
+    
+    const user = getUserByRank(rank);
+    const gift = rankGifts[rank];
+    
+    if (!user || !gift) return; // ユーザーか景品がない場合は何もしない
+    
+    try {
+      console.log(`Rank ${rank}: Marking user ${user.id} as winner and decreasing stock of gift ${gift.id}`);
+      
+      // ユーザーを当選者としてマーク
+      await firebaseService.setUserAsWinner(user.id);
+      
+      // ギフトの在庫を減らす
+      if (gift.stock > 0) {
+        await firebaseService.updateGift(gift.id, { stock: gift.stock - 1 });
+      }
+      
+      // 当選結果をログに追加
+      const winResult = {
+        user: user,
+        gift: {
+          id: gift.id,
+          name: gift.name,
+          price: gift.price,
+          imgKey: gift.imgKey
+        },
+        timestamp: new Date().toISOString()
+      };
+      
+      await firebaseService.addLotteryLog(winResult);
+      
+    } catch (error) {
+      console.error(`Error marking rank ${rank} winner:`, error);
+    }
+  };
+
   // ランク別のギフト
   const rankGifts = useMemo(() => {
-    // available giftsを取得
-    const availableGifts = gifts.filter(gift => gift.stock > 0);
+    // 固定ギフトID割り当て
+    const giftMapping = {
+      1: 'gift001', // 1位のギフトは必ずgift001
+      2: 'gift002', // 2位のギフトは必ずgift002
+      3: 'gift003'  // 3位のギフトは必ずgift003
+    };
     
-    // 仮のギフト割り当て（実際のアプリでは管理画面で設定する機能が必要かもしれません）
+    // IDからギフトオブジェクトを探す
+    const findGiftById = (id) => gifts.find(gift => gift.id === id) || null;
+    
     return {
-      1: availableGifts.length > 0 ? availableGifts[0] : null, // 1位のギフト
-      2: availableGifts.length > 1 ? availableGifts[1] : null, // 2位のギフト
-      3: availableGifts.length > 2 ? availableGifts[2] : null, // 3位のギフト
+      1: findGiftById(giftMapping[1]),
+      2: findGiftById(giftMapping[2]),
+      3: findGiftById(giftMapping[3])
     };
   }, [gifts]);
 
   // 次のステップに進む
-  const nextStep = () => {
+  const nextStep = async () => {
     if (step < 4) {
       setAnimating(true);
+      
+      // ステップが1になるとき（結果発表開始時）に、上位入賞者と景品の在庫を処理
+      if (step === 0) {
+        const numWinners = topRankedUsers.length;
+        
+        // 上位入賞者の数に応じて景品を使用済みとしてマーク
+        for (let rank = 1; rank <= numWinners; rank++) {
+          const user = getUserByRank(rank);
+          const gift = rankGifts[rank];
+          
+          if (user && gift) {
+            try {
+              // この時点で、このユーザーを当選者としてマークし、景品の在庫を減らす
+              // しかし、結果は順番に発表される
+              await markGiftAsUsed(rank);
+            } catch (error) {
+              console.error(`Error processing rank ${rank}:`, error);
+            }
+          }
+        }
+      }
+      
       setTimeout(() => {
         setStep(step + 1);
         setAnimating(false);
