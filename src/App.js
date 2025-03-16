@@ -11,7 +11,7 @@ function App() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [setBrowserId] = useState('');
+  // const [setBrowserId] = useState('');
   const [currentUser, setCurrentUser] = useState(null);
   
   // 抽選関連の状態
@@ -27,7 +27,7 @@ function App() {
   // ブラウザID & ユーザーデータの初期化
   useEffect(() => {
     const browser_id = getBrowserUserId();
-    setBrowserId(browser_id);
+    // setBrowserId(browser_id);
     
     setLoading(true);
     
