@@ -6,6 +6,7 @@ function Header() {
   const location = useLocation();
   const isHome = location.pathname === '/';
   const isSettings = location.pathname === '/settings';
+  const isAnnouncement = location.pathname === '/announcement';
 
   return (
     <header className="App-header">
@@ -13,6 +14,9 @@ function Header() {
         <h1>謎解きチャレンジ抽選会</h1>
         <nav className="main-navigation">
           <ul>
+            <li className={isAnnouncement ? 'active' : ''}>
+              <Link to="/announcement">結果発表</Link>
+            </li>
             <li className={isHome ? 'active' : ''}>
               <Link to="/">抽選画面</Link>
             </li>

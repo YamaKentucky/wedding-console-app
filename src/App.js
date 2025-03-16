@@ -10,6 +10,7 @@ import Header from './components/Header/Header';
 // Import pages
 import HomePage from './pages/HomePage';
 import SettingsPage from './pages/SettingsPage';
+import AnnouncementPage from './pages/AnnouncementPage';
 
 // Import styles
 import './App.css';
@@ -360,6 +361,10 @@ const startUserLottery = () => {
           <Route 
             path="/settings" 
             element={<SettingsPage {...commonProps} />} 
+          />
+          <Route 
+            path="/announcement" 
+            element={<AnnouncementPage users={users} gifts={gifts} />} 
           />
         </Routes>
       </div>
