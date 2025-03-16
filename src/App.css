@@ -115,52 +115,79 @@
   gap: 0.5rem;
 }
 
+.lottery-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
 .lottery-btn {
   min-width: 180px;
   padding: 0.8rem 1.5rem;
   font-size: 1.1rem;
   border-radius: 30px;
-  background-image: linear-gradient(135deg, #43a047 0%, #2e7d32 100%);
   transform: translateY(0);
   transition: all 0.2s ease;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.lottery-btn:hover {
+.user-lottery-btn {
+  background-image: linear-gradient(135deg, #43a047 0%, #2e7d32 100%);
+}
+
+.user-lottery-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
   background-image: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
 }
 
+.gift-lottery-btn {
+  background-image: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+}
+
+.gift-lottery-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  background-image: linear-gradient(135deg, #f57c00 0%, #ef6c00 100%);
+}
+
 .lottery-btn:disabled {
   background-image: none;
+  opacity: 0.5;
   transform: translateY(0);
   box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* 抽選結果表示 */
+.lottery-results {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.winner-display, .gift-display {
+  flex: 1;
+  min-width: 250px;
+  max-width: 320px;
 }
 
 /* 当選者表示 */
-.winner-display {
-  margin: 1.8rem 0;
-  min-height: 250px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.winner-card {
+.winner-card, .gift-card {
   border: none;
   border-radius: 12px;
-  padding: 2rem;
-  max-width: 320px;
-  width: 100%;
+  padding: 1.5rem;
   text-align: center;
   box-shadow: 0 6px 25px rgba(0, 0, 0, 0.07);
   background-color: #fff;
   transition: all 0.3s ease;
+  height: 100%;
 }
 
-.winner-card.spinning {
+.winner-card.spinning, .gift-card.spinning {
   animation: pulse 1s infinite alternate;
 }
 
@@ -170,8 +197,8 @@
 }
 
 .winner-avatar {
-  width: 100px;
-  height: 100px;
+  width: 80px;
+  height: 80px;
   background-image: linear-gradient(135deg, #3f51b5, #9c27b0);
   color: white;
   border-radius: 50%;
@@ -179,13 +206,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 3rem;
+  font-size: 2.5rem;
   font-weight: bold;
   box-shadow: 0 5px 15px rgba(124, 77, 255, 0.3);
 }
 
-.winner-name {
-  font-size: 1.8rem;
+.winner-name, .gift-name {
+  font-size: 1.5rem;
   font-weight: bold;
   margin-bottom: 0.5rem;
   color: #333;
@@ -197,13 +224,39 @@
   margin-bottom: 1.2rem;
 }
 
-.no-winner-message {
-  padding: 3rem 2rem;
+.gift-icon {
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.gift-price {
+  font-size: 1.1rem;
+  color: #f57c00;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.gift-stock {
+  font-size: 0.9rem;
+  color: #666;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  background-color: #f1f1f1;
+  display: inline-block;
+}
+
+.no-winner-message, .no-gift-message {
+  padding: 2rem 1.5rem;
   border: 2px dashed #e0e0e0;
   border-radius: 12px;
   color: #666;
   font-size: 1.1rem;
   background-color: #fafafa;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* 過去の当選者リスト */
@@ -252,6 +305,72 @@
 .winner-mini-id {
   font-size: 0.85rem;
   color: #666;
+}
+
+.winner-gift {
+  display: flex;
+  align-items: center;
+  background-color: #fff3e0;
+  padding: 0.3rem 0.6rem;
+  border-radius: 20px;
+  margin-left: 0.5rem;
+}
+
+.gift-emoji {
+  margin-right: 0.25rem;
+}
+
+/* 景品一覧 */
+.gift-list-section {
+  margin-top: 2rem;
+  text-align: left;
+}
+
+.gift-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.gift-list-item {
+  padding: 1rem;
+  border-radius: 8px;
+  background-color: #fff;
+  border-left: 4px solid #ff9800;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.gift-list-icon {
+  font-size: 1.8rem;
+  margin-right: 0.75rem;
+}
+
+.gift-list-info {
+  flex: 1;
+}
+
+.gift-list-name {
+  font-weight: 600;
+}
+
+.gift-list-price {
+  font-size: 0.9rem;
+  color: #f57c00;
+}
+
+.gift-list-stock {
+  padding: 0.2rem 0.5rem;
+  border-radius: 20px;
+  background-color: #e8f5e9;
+  color: #388e3c;
+  font-size: 0.85rem;
+}
+
+.gift-list-stock.out-of-stock {
+  background-color: #ffebee;
+  color: #c62828;
 }
 
 /* 当選確率表 */
@@ -545,5 +664,14 @@
   
   .users-list-container {
     height: 400px;
+  }
+  
+  .lottery-results {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .winner-display, .gift-display {
+    width: 100%;
   }
 }

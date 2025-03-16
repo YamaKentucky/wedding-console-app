@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { firebaseService } from './firebase';
 import { 
   getBrowserUserId, 
@@ -9,13 +9,16 @@ import './App.css';
 function App() {
   // ステート管理
   const [users, setUsers] = useState([]);
+  const [gifts, setGifts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   
   // 抽選関連の状態
-  const [isSpinning, setIsSpinning] = useState(false);
+  const [isSpinningUser, setIsSpinningUser] = useState(false);
+  const [isSpinningGift, setIsSpinningGift] = useState(false);
   const [winner, setWinner] = useState(null);
+  const [selectedGift, setSelectedGift] = useState(null);
   const [recentWinners, setRecentWinners] = useState([]);
   const [eligibleOnly, setEligibleOnly] = useState(false);
   const [updateStatus, setUpdateStatus] = useState({ pending: false, success: null });
@@ -29,7 +32,7 @@ function App() {
     // Firebaseからデータを読み込みとリアルタイム監視を設定
     const initializeData = async () => {
       try {
-        // まずFirebaseからデータを取得
+        // ユーザーデータを取得
         const usersData = await firebaseService.getAllUsers();
         
         // データがなければ初期データをセットアップ
@@ -41,31 +44,48 @@ function App() {
         } else {
           setUsers(usersData);
         }
+
+        // ギフトデータを取得
+        try {
+          const giftsData = await firebaseService.getAllGifts();
+          setGifts(giftsData);
+        } catch (giftError) {
+          console.error('ギフトデータの取得エラー:', giftError);
+          // ギフトデータが取得できなくても、アプリは継続する
+        }
         
         // リアルタイム監視を設定
-        const unsubscribe = firebaseService.watchUsers((updatedUsers) => {
-          console.log('Realtime update received:', updatedUsers);
+        const unsubscribe = firebaseService.watchUsersAndGifts((updatedData) => {
+          console.log('Realtime update received:', updatedData);
           
-          // 各ユーザーに表示名の最初の文字をアバターとして追加
-          const usersWithAvatars = updatedUsers.map(user => ({
-            ...user,
-            avatar: user.sucsessID ? user.sucsessID.charAt(0) : '?',
-            name: user.sucsessID // 一時的に表示名としてsucsessIDを使用
-          }));
-          
-          setUsers(usersWithAvatars);
-          
-          // 保存されたPrimaryIDがあれば、対応するユーザーを探す
-          const savedPrimaryId = getSavedPrimaryId();
-          if (savedPrimaryId) {
-            const matchedUser = usersWithAvatars.find(u => 
-              u.primaryID?.toString() === savedPrimaryId ||
-              u.browserId === browser_id
-            );
+          // ユーザー更新
+          if (updatedData.users) {
+            // 各ユーザーに表示名の最初の文字をアバターとして追加
+            const usersWithAvatars = updatedData.users.map(user => ({
+              ...user,
+              avatar: user.sucsessID ? user.sucsessID.charAt(0) : '?',
+              name: user.sucsessID // 一時的に表示名としてsucsessIDを使用
+            }));
             
-            if (matchedUser) {
-              setCurrentUser(matchedUser);
+            setUsers(usersWithAvatars);
+            
+            // 保存されたPrimaryIDがあれば、対応するユーザーを探す
+            const savedPrimaryId = getSavedPrimaryId();
+            if (savedPrimaryId) {
+              const matchedUser = usersWithAvatars.find(u => 
+                u.primaryID?.toString() === savedPrimaryId ||
+                u.browserId === browser_id
+              );
+              
+              if (matchedUser) {
+                setCurrentUser(matchedUser);
+              }
             }
+          }
+
+          // ギフト更新
+          if (updatedData.gifts) {
+            setGifts(updatedData.gifts);
           }
         });
         
@@ -101,10 +121,29 @@ function App() {
     }
   };
 
-  // 抽選を開始する関数
-  const startLottery = () => {
-    setIsSpinning(true);
+  // ギフトの在庫を減らす
+  const decreaseGiftStock = async (giftId) => {
+    try {
+      setUpdateStatus({ pending: true, success: null });
+      const gift = gifts.find(g => g.id === giftId);
+      if (gift && gift.stock > 0) {
+        await firebaseService.updateGift(giftId, { stock: gift.stock - 1 });
+        setUpdateStatus({ pending: false, success: true });
+        console.log(`Gift stock updated for ${giftId}`);
+      }
+      return true;
+    } catch (error) {
+      console.error('Error updating gift stock:', error);
+      setUpdateStatus({ pending: false, success: false });
+      throw error;
+    }
+  };
+
+  // 当選者を抽選する関数
+  const startUserLottery = () => {
+    setIsSpinningUser(true);
     setWinner(null);
+    setSelectedGift(null);
     
     // チェックボックスが選択されている場合は対象ユーザーのみをフィルタリング
     const eligibleUsers = eligibleOnly
@@ -113,7 +152,7 @@ function App() {
     
     if (eligibleUsers.length === 0) {
       setTimeout(() => {
-        setIsSpinning(false);
+        setIsSpinningUser(false);
         // 対象ユーザーなし
         return;
       }, 2000);
@@ -129,7 +168,7 @@ function App() {
       
       if (counter > 15) {
         clearInterval(cycleUsers);
-        setIsSpinning(false);
+        setIsSpinningUser(false);
         
         // 当選確率に影響を与える（進捗度が高いほど当選しやすい）
         const weightedUsers = [];
@@ -146,7 +185,6 @@ function App() {
         const finalWinner = weightedUsers[finalIndex];
         
         setWinner(finalWinner);
-        setRecentWinners(prev => [finalWinner, ...prev].slice(0, 5));
         
         // 当選者の進捗ステップを増加（Firebaseにも反映）
         if (finalWinner.step < 3) {
@@ -169,6 +207,61 @@ function App() {
           } catch (error) {
             console.error('Failed to update winner step:', error);
           }
+        }
+      }
+    }, 100);
+  };
+
+  // ギフトを抽選する関数
+  const startGiftLottery = () => {
+    if (!winner) {
+      alert('先に当選者を選んでください');
+      return;
+    }
+
+    setIsSpinningGift(true);
+    setSelectedGift(null);
+
+    // 在庫があるギフトのみ対象にする
+    const availableGifts = gifts.filter(gift => gift.stock > 0);
+    
+    if (availableGifts.length === 0) {
+      setTimeout(() => {
+        setIsSpinningGift(false);
+        alert('景品の在庫がありません');
+        return;
+      }, 1000);
+      return;
+    }
+
+    // アニメーション効果：ギフトを高速で循環表示
+    let counter = 0;
+    const cycleGifts = setInterval(async () => {
+      const randomIndex = Math.floor(Math.random() * availableGifts.length);
+      setSelectedGift(availableGifts[randomIndex]);
+      counter++;
+      
+      if (counter > 10) {
+        clearInterval(cycleGifts);
+        setIsSpinningGift(false);
+        
+        // 最終的なギフトを選択
+        const finalGift = availableGifts[Math.floor(Math.random() * availableGifts.length)];
+        setSelectedGift(finalGift);
+        
+        // 当選結果を履歴に追加
+        const winResult = {
+          user: winner,
+          gift: finalGift,
+          timestamp: new Date().toISOString()
+        };
+        setRecentWinners(prev => [winResult, ...prev].slice(0, 5));
+        
+        // ギフトの在庫を減らす
+        try {
+          await decreaseGiftStock(finalGift.id);
+        } catch (error) {
+          console.error('Failed to update gift stock:', error);
         }
       }
     }, 100);
@@ -243,48 +336,79 @@ function App() {
                 <label htmlFor="eligibleOnly">謎解き挑戦者のみで抽選</label>
               </div>
               
-              <button 
-                onClick={startLottery} 
-                disabled={isSpinning || updateStatus.pending}
-                className="submit-btn lottery-btn"
-              >
-                {isSpinning ? '抽選中...' : '抽選開始'}
-              </button>
+              <div className="lottery-buttons">
+                <button 
+                  onClick={startUserLottery} 
+                  disabled={isSpinningUser || isSpinningGift || updateStatus.pending}
+                  className="submit-btn lottery-btn user-lottery-btn"
+                >
+                  {isSpinningUser ? '当選者抽選中...' : '当選者を抽選'}
+                </button>
+                
+                <button 
+                  onClick={startGiftLottery} 
+                  disabled={!winner || isSpinningUser || isSpinningGift || updateStatus.pending}
+                  className="submit-btn lottery-btn gift-lottery-btn"
+                >
+                  {isSpinningGift ? '景品抽選中...' : '景品を抽選'}
+                </button>
+              </div>
             </div>
             
-            {/* 当選者表示 */}
-            <div className="winner-display">
-              {winner ? (
-                <div className={`winner-card ${isSpinning ? 'spinning' : ''}`}>
-                  <h3>当選者</h3>
-                  <div className="winner-avatar">{winner.avatar}</div>
-                  <div className="winner-name">{winner.sucsessID}</div>
-                  <div className="winner-id">ID: {winner.primaryID}</div>
-                  <div className={`status ${getStepColor(winner.step)}`}>
-                    {getStepText(winner.step)}
+            {/* 抽選結果表示エリア */}
+            <div className="lottery-results">
+              {/* 当選者表示 */}
+              <div className="winner-display">
+                <h3>当選者</h3>
+                {winner ? (
+                  <div className={`winner-card ${isSpinningUser ? 'spinning' : ''}`}>
+                    <div className="winner-avatar">{winner.avatar}</div>
+                    <div className="winner-name">{winner.sucsessID}</div>
+                    <div className="winner-id">ID: {winner.primaryID}</div>
+                    <div className={`status ${getStepColor(winner.step)}`}>
+                      {getStepText(winner.step)}
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <div className="no-winner-message">
-                  抽選ボタンを押して当選者を選びましょう
-                </div>
-              )}
+                ) : (
+                  <div className="no-winner-message">
+                    抽選ボタンを押して当選者を選びましょう
+                  </div>
+                )}
+              </div>
+              
+              {/* ギフト表示 */}
+              <div className="gift-display">
+                <h3>景品</h3>
+                {selectedGift ? (
+                  <div className={`gift-card ${isSpinningGift ? 'spinning' : ''}`}>
+                    <div className="gift-icon">🎁</div>
+                    <div className="gift-name">{selectedGift.name}</div>
+                    <div className="gift-price">{selectedGift.price}円相当</div>
+                    <div className="gift-stock">残り在庫: {selectedGift.stock}個</div>
+                  </div>
+                ) : (
+                  <div className="no-gift-message">
+                    {winner ? '景品を抽選してください' : '先に当選者を選んでください'}
+                  </div>
+                )}
+              </div>
             </div>
             
             {/* 過去の当選者 */}
             {recentWinners.length > 0 && (
               <div className="recent-winners">
-                <h3>過去の当選者</h3>
+                <h3>過去の抽選結果</h3>
                 <div className="winners-list">
-                  {recentWinners.map((user, index) => (
-                    <div key={`${user.id}-${index}`} className="winner-list-item">
-                      <div className="winner-mini-avatar">{user.avatar}</div>
+                  {recentWinners.map((result, index) => (
+                    <div key={index} className="winner-list-item">
+                      <div className="winner-mini-avatar">{result.user.avatar}</div>
                       <div className="winner-info">
-                        <div className="winner-mini-name">{user.sucsessID}</div>
-                        <div className="winner-mini-id">ID: {user.primaryID}</div>
+                        <div className="winner-mini-name">{result.user.sucsessID}</div>
+                        <div className="winner-mini-id">ID: {result.user.primaryID}</div>
                       </div>
-                      <div className={`status ${getStepColor(user.step)}`}>
-                        {getStepText(user.step)}
+                      <div className="winner-gift">
+                        <span className="gift-emoji">🎁</span>
+                        <span className="gift-name">{result.gift.name}</span>
                       </div>
                     </div>
                   ))}
@@ -334,6 +458,25 @@ function App() {
                   <div className="prob-status status-3">全ての謎を解明</div>
                   <div>基本確率×4</div>
                 </div>
+              </div>
+            </div>
+            
+            {/* 景品一覧 */}
+            <div className="gift-list-section">
+              <h3>景品一覧</h3>
+              <div className="gift-list">
+                {gifts.map(gift => (
+                  <div key={gift.id} className="gift-list-item">
+                    <div className="gift-list-icon">🎁</div>
+                    <div className="gift-list-info">
+                      <div className="gift-list-name">{gift.name}</div>
+                      <div className="gift-list-price">{gift.price}円相当</div>
+                    </div>
+                    <div className={`gift-list-stock ${gift.stock <= 0 ? 'out-of-stock' : ''}`}>
+                      残り{gift.stock}個
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
