@@ -1,0 +1,14 @@
+.App-header {
+    background-color: #3f51b5;
+    color: white;
+    text-align: center;
+    padding: 1.5rem 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-image: linear-gradient(135deg, #3f51b5 0%, #7e57c2 100%);
+  }
+  
+  .App-header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  }

@@ -1,0 +1,158 @@
+/* ユーザーリスト コンテナ - マーキーアニメーション用 */
+.users-list-container {
+    position: relative;
+    height: 530px;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.05);
+  }
+  
+  .users-sidebar .panel {
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .users-list-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 30px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.95), rgba(255,255,255,0));
+    z-index: 1;
+    pointer-events: none;
+  }
+  
+  .users-list-container::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 30px;
+    background: linear-gradient(to top, rgba(255,255,255,0.95), rgba(255,255,255,0));
+    z-index: 1;
+    pointer-events: none;
+  }
+  
+  /* マーキーアニメーション実装 */
+  .users-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    animation: marquee 30s linear infinite;
+    padding: 10px;
+    /* 高さを自動で2倍にする */
+    position: relative;
+  }
+  
+  /* マーキーアニメーションの定義 */
+  @keyframes marquee {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(-50%);
+    }
+  }
+  
+  /* アイテムのスタイル */
+  .user-list-item {
+    padding: 1rem;
+    border-radius: 8px;
+    background-color: #fff;
+    border-left: 4px solid #3f51b5;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    min-height: 120px;
+  }
+  
+  .user-list-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .user-list-item.current-user-item {
+    background-color: #e8f5e9;
+    border-left: 4px solid #4caf50;
+  }
+  
+  .user-item-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.8rem;
+  }
+  
+  .user-avatar {
+    width: 45px;
+    height: 45px;
+    background-image: linear-gradient(135deg, #3f51b5, #9c27b0);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-right: 0.8rem;
+    font-size: 1.3rem;
+    box-shadow: 0 3px 8px rgba(124, 77, 255, 0.2);
+  }
+  
+  .user-info {
+    flex: 1;
+  }
+  
+  .user-name {
+    font-weight: bold;
+    font-size: 1.1rem;
+  }
+  
+  .user-id {
+    font-size: 0.9rem;
+    color: #666;
+  }
+  
+  .user-progress {
+    margin-top: 0.5rem;
+  }
+  
+  .progress-header {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0.5rem;
+  }
+  
+  .progress-detail {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.6rem;
+    font-size: 0.85rem;
+    color: #666;
+  }
+  
+  .progress-percent {
+    font-weight: 600;
+    color: #444;
+  }
+  
+  .progress-chance {
+    color: #1976d2;
+    font-weight: 600;
+  }
+  
+  /* プログレスバー */
+  .progress-container {
+    height: 8px;
+    background-color: #f1f1f1;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .progress-bar {
+    height: 100%;
+    background-image: linear-gradient(90deg, #3f51b5, #9c27b0);
+    transition: width 0.3s ease;
+  }

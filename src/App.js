@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { firebaseService } from './firebase';
-import { 
-  getBrowserUserId, 
-  getSavedPrimaryId,
-} from './utils/browserIdentity';
+import { getBrowserUserId, getSavedPrimaryId } from './utils/browserIdentity';
+import { getStepText, getStepColor, calculateWinningProbability, calculateProgress } from './utils/lotteryUtils';
+
+// Import components
+import Header from './components/Header/Header';
+import LotterySection from './components/LotterySection/LotterySection';
+import UsersSidebar from './components/UsersSidebar/UsersSidebar';
+
+// Import styles
 import './App.css';
 
 function App() {
@@ -266,41 +271,6 @@ function App() {
       }
     }, 100);
   };
-  
-  // 進捗ステップのテキストを取得する関数
-  const getStepText = (step) => {
-    switch(step) {
-      case 0: return '未解答';
-      case 1: return '第1の謎を解明';
-      case 2: return '第2の謎を解明';
-      case 3: return '全ての謎を解明';
-      default: return '不明';
-    }
-  };
-  
-  // 進捗ステップの色を取得する関数
-  const getStepColor = (step) => {
-    switch(step) {
-      case 0: return 'status-0';
-      case 1: return 'status-1';
-      case 2: return 'status-2';
-      case 3: return 'status-3';
-      default: return 'status-0';
-    }
-  };
-  
-  // 当選確率を計算する関数（進捗に応じて確率が上がる）
-  const calculateWinningProbability = (step, totalUsers) => {
-    const baseChance = 1 / totalUsers; // 基本の確率
-    const multiplier = step + 1; // ステップに応じた倍率
-    const probability = (baseChance * multiplier) * 100;
-    return Math.min(probability, 100).toFixed(1); // 最大100%に制限
-  };
-  
-  // 進捗率を計算する関数
-  const calculateProgress = (step) => {
-    return (step / 3) * 100;
-  };
 
   if (loading) {
     return <div className="container loading">データを読み込み中...</div>;
@@ -310,219 +280,36 @@ function App() {
     return <div className="container error">{error}</div>;
   }
 
-  // CSSマーキーアニメーション用に、データを2セット用意
-  const displayUsers = [...users, ...users];
-
   return (
     <div className="App">
-      <header className="App-header">
-        <h1>謎解きチャレンジ抽選会</h1>
-      </header>
+      <Header />
       
       <div className="app-container">
-        {/* メイン抽選セクション（中央） */}
-        <div className="lottery-section">
-          <div className="panel lottery-panel">
-            <h2>ラッキードロー</h2>
-            
-            <div className="lottery-controls">
-              <div className="eligibility-filter">
-                <input 
-                  type="checkbox" 
-                  id="eligibleOnly" 
-                  checked={eligibleOnly}
-                  onChange={() => setEligibleOnly(!eligibleOnly)}
-                />
-                <label htmlFor="eligibleOnly">謎解き挑戦者のみで抽選</label>
-              </div>
-              
-              <div className="lottery-buttons">
-                <button 
-                  onClick={startUserLottery} 
-                  disabled={isSpinningUser || isSpinningGift || updateStatus.pending}
-                  className="submit-btn lottery-btn user-lottery-btn"
-                >
-                  {isSpinningUser ? '当選者抽選中...' : '当選者を抽選'}
-                </button>
-                
-                <button 
-                  onClick={startGiftLottery} 
-                  disabled={!winner || isSpinningUser || isSpinningGift || updateStatus.pending}
-                  className="submit-btn lottery-btn gift-lottery-btn"
-                >
-                  {isSpinningGift ? '景品抽選中...' : '景品を抽選'}
-                </button>
-              </div>
-            </div>
-            
-            {/* 抽選結果表示エリア */}
-            <div className="lottery-results">
-              {/* 当選者表示 */}
-              <div className="winner-display">
-                <h3>当選者</h3>
-                {winner ? (
-                  <div className={`winner-card ${isSpinningUser ? 'spinning' : ''}`}>
-                    <div className="winner-avatar">{winner.avatar}</div>
-                    <div className="winner-name">{winner.sucsessID}</div>
-                    <div className="winner-id">ID: {winner.primaryID}</div>
-                    <div className={`status ${getStepColor(winner.step)}`}>
-                      {getStepText(winner.step)}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="no-winner-message">
-                    抽選ボタンを押して当選者を選びましょう
-                  </div>
-                )}
-              </div>
-              
-              {/* ギフト表示 */}
-              <div className="gift-display">
-                <h3>景品</h3>
-                {selectedGift ? (
-                  <div className={`gift-card ${isSpinningGift ? 'spinning' : ''}`}>
-                    <div className="gift-icon">🎁</div>
-                    <div className="gift-name">{selectedGift.name}</div>
-                    <div className="gift-price">{selectedGift.price}円相当</div>
-                    <div className="gift-stock">残り在庫: {selectedGift.stock}個</div>
-                  </div>
-                ) : (
-                  <div className="no-gift-message">
-                    {winner ? '景品を抽選してください' : '先に当選者を選んでください'}
-                  </div>
-                )}
-              </div>
-            </div>
-            
-            {/* 過去の当選者 */}
-            {recentWinners.length > 0 && (
-              <div className="recent-winners">
-                <h3>過去の抽選結果</h3>
-                <div className="winners-list">
-                  {recentWinners.map((result, index) => (
-                    <div key={index} className="winner-list-item">
-                      <div className="winner-mini-avatar">{result.user.avatar}</div>
-                      <div className="winner-info">
-                        <div className="winner-mini-name">{result.user.sucsessID}</div>
-                        <div className="winner-mini-id">ID: {result.user.primaryID}</div>
-                      </div>
-                      <div className="winner-gift">
-                        <span className="gift-emoji">🎁</span>
-                        <span className="gift-name">{result.gift.name}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-            
-            {/* 更新ステータス表示 */}
-            {updateStatus.pending && (
-              <div className="update-status pending">
-                データベース更新中...
-              </div>
-            )}
-            {updateStatus.success === true && (
-              <div className="update-status success">
-                データベース更新完了
-              </div>
-            )}
-            {updateStatus.success === false && (
-              <div className="update-status error">
-                データベース更新失敗
-              </div>
-            )}
-            
-            {/* 謎解き進捗による当選確率の説明 */}
-            <div className="lottery-info">
-              <h3>当選確率について</h3>
-              <p>謎解きの進捗度に応じて当選確率が上がります。より多くの謎を解けば、当選確率が高くなります！</p>
-              <div className="probability-table">
-                <div className="prob-row prob-header">
-                  <div>進捗度</div>
-                  <div>当選確率</div>
-                </div>
-                <div className="prob-row">
-                  <div className="prob-status status-0">未解答</div>
-                  <div>基本確率</div>
-                </div>
-                <div className="prob-row">
-                  <div className="prob-status status-1">第1の謎を解明</div>
-                  <div>基本確率×2</div>
-                </div>
-                <div className="prob-row">
-                  <div className="prob-status status-2">第2の謎を解明</div>
-                  <div>基本確率×3</div>
-                </div>
-                <div className="prob-row">
-                  <div className="prob-status status-3">全ての謎を解明</div>
-                  <div>基本確率×4</div>
-                </div>
-              </div>
-            </div>
-            
-            {/* 景品一覧 */}
-            <div className="gift-list-section">
-              <h3>景品一覧</h3>
-              <div className="gift-list">
-                {gifts.map(gift => (
-                  <div key={gift.id} className="gift-list-item">
-                    <div className="gift-list-icon">🎁</div>
-                    <div className="gift-list-info">
-                      <div className="gift-list-name">{gift.name}</div>
-                      <div className="gift-list-price">{gift.price}円相当</div>
-                    </div>
-                    <div className={`gift-list-stock ${gift.stock <= 0 ? 'out-of-stock' : ''}`}>
-                      残り{gift.stock}個
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
+        <LotterySection
+          users={users}
+          gifts={gifts}
+          winner={winner}
+          selectedGift={selectedGift}
+          recentWinners={recentWinners}
+          eligibleOnly={eligibleOnly}
+          setEligibleOnly={setEligibleOnly}
+          isSpinningUser={isSpinningUser}
+          isSpinningGift={isSpinningGift}
+          updateStatus={updateStatus}
+          startUserLottery={startUserLottery}
+          startGiftLottery={startGiftLottery}
+          getStepText={getStepText}
+          getStepColor={getStepColor}
+        />
         
-        {/* ユーザー情報サイドバー（右側） */}
-        <div className="users-sidebar">
-          <div className="panel">
-            <h2>参加者一覧</h2>
-            
-            <div className="users-list-container">
-              <div className="users-list">
-                {displayUsers.map((user, index) => (
-                  <div key={`${user.id}-${index}`} className={`user-list-item ${currentUser && user.id === currentUser.id ? 'current-user-item' : ''}`}>
-                    <div className="user-item-header">
-                      <div className="user-avatar">{user.avatar}</div>
-                      <div className="user-info">
-                        <div className="user-name">{user.sucsessID}</div>
-                        <div className="user-id">ID: {user.primaryID}</div>
-                      </div>
-                    </div>
-                    
-                    <div className="user-progress">
-                      <div className="progress-header">
-                        <div className={`status ${getStepColor(user.step)}`}>
-                          {getStepText(user.step)}
-                        </div>
-                        <div className="progress-detail">
-                          <span className="progress-percent">{calculateProgress(user.step).toFixed(0)}% 完了</span>
-                          <span className="progress-chance">当選率 {calculateWinningProbability(user.step, users.length)}%</span>
-                        </div>
-                      </div>
-                      
-                      <div className="progress-container">
-                        <div 
-                          className="progress-bar" 
-                          style={{ width: `${calculateProgress(user.step)}%` }}
-                        ></div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
+        <UsersSidebar
+          users={users}
+          currentUser={currentUser}
+          getStepText={getStepText}
+          getStepColor={getStepColor}
+          calculateProgress={calculateProgress}
+          calculateWinningProbability={calculateWinningProbability}
+        />
       </div>
     </div>
   );
