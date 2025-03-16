@@ -1,38 +1,539 @@
 .App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #333;
+  background-color: #f5f7fa;
+  min-height: 100vh;
 }
 
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+  background-color: #3f51b5;
+  color: white;
+  text-align: center;
+  padding: 1.5rem 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-image: linear-gradient(135deg, #3f51b5 0%, #7e57c2 100%);
+}
+
+.App-header h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.error {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+/* アプリケーションレイアウト */
+.app-container {
+  display: flex;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  gap: 1.5rem;
+}
+
+.lottery-section {
+  flex: 1;
+}
+
+.users-sidebar {
+  width: 330px;
+}
+
+/* パネルのスタイル */
+.panel {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.panel h2 {
+  margin-top: 0;
+  font-size: 1.4rem;
+  color: #333;
+  margin-bottom: 1.2rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.8rem;
+  position: relative;
+}
+
+.panel h2::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(90deg, #3f51b5, #7e57c2);
+  border-radius: 2px;
+}
+
+.panel h3 {
+  font-size: 1.1rem;
+  margin-top: 1rem;
+  margin-bottom: 0.8rem;
+  color: #444;
+}
+
+/* 抽選コントロール */
+.lottery-panel {
+  text-align: center;
+}
+
+.lottery-controls {
+  margin-bottom: 1.5rem;
+  background-color: #f8f9fa;
+  padding: 1.2rem;
+  border-radius: 8px;
+}
+
+.eligibility-filter {
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.lottery-btn {
+  min-width: 180px;
+  padding: 0.8rem 1.5rem;
+  font-size: 1.1rem;
+  border-radius: 30px;
+  background-image: linear-gradient(135deg, #43a047 0%, #2e7d32 100%);
+  transform: translateY(0);
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.lottery-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  background-image: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+}
+
+.lottery-btn:disabled {
+  background-image: none;
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* 当選者表示 */
+.winner-display {
+  margin: 1.8rem 0;
+  min-height: 250px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+}
+
+.winner-card {
+  border: none;
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 320px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.07);
+  background-color: #fff;
+  transition: all 0.3s ease;
+}
+
+.winner-card.spinning {
+  animation: pulse 1s infinite alternate;
+}
+
+@keyframes pulse {
+  from { box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05); }
+  to { box-shadow: 0 8px 25px rgba(63, 81, 181, 0.35); }
+}
+
+.winner-avatar {
+  width: 100px;
+  height: 100px;
+  background-image: linear-gradient(135deg, #3f51b5, #9c27b0);
   color: white;
+  border-radius: 50%;
+  margin: 0 auto 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  font-weight: bold;
+  box-shadow: 0 5px 15px rgba(124, 77, 255, 0.3);
 }
 
-.App-link {
-  color: #61dafb;
+.winner-name {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: #333;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.winner-id {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 1.2rem;
+}
+
+.no-winner-message {
+  padding: 3rem 2rem;
+  border: 2px dashed #e0e0e0;
+  border-radius: 12px;
+  color: #666;
+  font-size: 1.1rem;
+  background-color: #fafafa;
+}
+
+/* 過去の当選者リスト */
+.winners-list {
+  margin-top: 1rem;
+}
+
+.winner-list-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  border-radius: 8px;
+  margin-bottom: 0.7rem;
+  background-color: #f9f9f9;
+  text-align: left;
+  transition: transform 0.2s ease;
+}
+
+.winner-list-item:hover {
+  transform: translateX(5px);
+  background-color: #f5f5f5;
+}
+
+.winner-mini-avatar {
+  width: 36px;
+  height: 36px;
+  background-image: linear-gradient(135deg, #3f51b5, #9c27b0);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-right: 0.75rem;
+  font-size: 1rem;
+}
+
+.winner-info {
+  flex: 1;
+}
+
+.winner-mini-name {
+  font-weight: 600;
+}
+
+.winner-mini-id {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+/* 当選確率表 */
+.lottery-info {
+  margin-top: 2rem;
+  text-align: left;
+  background-color: #f8f9fa;
+  padding: 1.2rem;
+  border-radius: 12px;
+  border-left: 4px solid #7e57c2;
+}
+
+.lottery-info p {
+  margin-bottom: 1rem;
+}
+
+.probability-table {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #eee;
+}
+
+.prob-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid #eee;
+  background-color: white;
+}
+
+.prob-row:last-child {
+  border-bottom: none;
+}
+
+.prob-header {
+  background-color: #f0f0f0;
+  font-weight: bold;
+}
+
+.prob-status {
+  font-size: 0.85rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 20px;
+  font-weight: 500;
+  display: inline-block;
+}
+
+/* ユーザーリスト */
+.users-list-container {
+  position: relative;
+  height: 530px;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.05);
+}
+
+.users-list-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 30px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.95), rgba(255,255,255,0));
+  z-index: 1;
+  pointer-events: none;
+}
+
+.users-list-container::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 30px;
+  background: linear-gradient(to top, rgba(255,255,255,0.95), rgba(255,255,255,0));
+  z-index: 1;
+  pointer-events: none;
+}
+
+.users-list {
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  padding: 8px;
+}
+
+.users-list::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+.user-list-item {
+  padding: 1rem;
+  border-radius: 8px;
+  background-color: #fff;
+  border-left: 4px solid #3f51b5;
+  transition: all 0.3s ease;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.user-list-item:hover {
+  transform: translateX(5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.user-list-item.current-user-item {
+  background-color: #e8f5e9;
+  border-left: 4px solid #4caf50;
+}
+
+.user-item-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.8rem;
+}
+
+.user-avatar {
+  width: 45px;
+  height: 45px;
+  background-image: linear-gradient(135deg, #3f51b5, #9c27b0);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-right: 0.8rem;
+  font-size: 1.3rem;
+  box-shadow: 0 3px 8px rgba(124, 77, 255, 0.2);
+}
+
+.user-info {
+  flex: 1;
+}
+
+.user-name {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.user-id {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.user-progress {
+  margin-top: 0.5rem;
+}
+
+.progress-header {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.5rem;
+}
+
+.progress-detail {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.6rem;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.progress-percent {
+  font-weight: 600;
+  color: #444;
+}
+
+.progress-chance {
+  color: #1976d2;
+  font-weight: 600;
+}
+
+/* ステータス表示 */
+.status {
+  font-size: 0.85rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 20px;
+  font-weight: 500;
+  display: inline-block;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.status-0 {
+  background-color: #e0e0e0;
+  color: #757575;
+}
+
+.status-1 {
+  background-color: #bbdefb;
+  color: #1976d2;
+  box-shadow: 0 2px 6px rgba(25, 118, 210, 0.2);
+}
+
+.status-2 {
+  background-color: #c8e6c9;
+  color: #388e3c;
+  box-shadow: 0 2px 6px rgba(56, 142, 60, 0.2);
+}
+
+.status-3 {
+  background-color: #d1c4e9;
+  color: #512da8;
+  box-shadow: 0 2px 6px rgba(81, 45, 168, 0.2);
+}
+
+/* プログレスバー */
+.progress-container {
+  height: 8px;
+  background-color: #f1f1f1;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.progress-bar {
+  height: 100%;
+  background-image: linear-gradient(90deg, #3f51b5, #9c27b0);
+  transition: width 0.3s ease;
+}
+
+/* ボタンスタイル */
+.submit-btn {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 0.75rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.submit-btn:hover {
+  background-color: #388e3c;
+}
+
+.submit-btn:disabled {
+  background-color: #a5d6a7;
+  cursor: not-allowed;
+}
+
+/* 更新ステータス */
+.update-status {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.update-status.pending {
+  background-color: #e3f2fd;
+  color: #1565c0;
+  animation: pulse 1.5s infinite;
+}
+
+.update-status.success {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.update-status.error {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+/* レスポンシブデザイン */
+@media (max-width: 900px) {
+  .app-container {
+    flex-direction: column;
   }
-  to {
-    transform: rotate(360deg);
+  
+  .users-sidebar {
+    width: 100%;
+  }
+  
+  .users-list-container {
+    height: 400px;
   }
 }
