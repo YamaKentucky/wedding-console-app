@@ -2,9 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { firebaseService } from './firebase';
 import { 
   getBrowserUserId, 
-  associateUserWithPrimaryId, 
   getSavedPrimaryId,
-  resetBrowserAssociation 
 } from './utils/browserIdentity';
 import './App.css';
 
@@ -13,7 +11,7 @@ function App() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [browserId, setBrowserId] = useState('');
+  const [setBrowserId] = useState('');
   const [currentUser, setCurrentUser] = useState(null);
   
   // 抽選関連の状態
