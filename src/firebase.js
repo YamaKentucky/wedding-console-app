@@ -20,6 +20,20 @@ const app = initializeApp(firebaseConfig);
 // Realtime Database の初期化
 const database = getDatabase(app);
 
+// チャタリング防止のためのデバウンス関数
+const debounce = (callback, delay = 300) => {
+  let timeoutId;
+  return (...args) => {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+    timeoutId = setTimeout(() => {
+      callback(...args);
+      timeoutId = null;
+    }, delay);
+  };
+};
+
 // Firebase操作を行うユーティリティ関数
 export const firebaseService = {
   // ユーザーデータを取得
@@ -75,9 +89,15 @@ export const firebaseService = {
     }
   },
   
-  // ユーザーとギフトをリアルタイムで監視
+  // ユーザーとギフトをリアルタイムで監視（チャタリング対策あり）
   watchUsersAndGifts(callback) {
     const rootRef = ref(database);
+    
+    // デバウンスされたコールバック関数
+    const debouncedCallback = debounce((result) => {
+      callback(result);
+    }, 300); // 300ms間に複数の更新があった場合、最後の更新のみを処理
+    
     return onValue(rootRef, (snapshot) => {
       if (snapshot.exists()) {
         const data = snapshot.val();
@@ -99,13 +119,13 @@ export const firebaseService = {
           }));
         }
         
-        callback(result);
+        debouncedCallback(result);
       } else {
-        callback({});
+        debouncedCallback({});
       }
     }, (error) => {
       console.error('Error watching data:', error);
-      callback({});
+      debouncedCallback({});
     });
   },
   
@@ -159,21 +179,67 @@ export const firebaseService = {
     }
   },
   
+  // ユーザーを当選者に設定する
+  async setUserAsWinner(userId) {
+    try {
+      console.log(`Setting user ${userId} as winner`);
+      const userRef = ref(database, `users/${userId}`);
+      await update(userRef, { gift: "True" });
+      return true;
+    } catch (error) {
+      console.error('Error setting user as winner:', error);
+      throw error;
+    }
+  },
+  
+  // ユーザーの当選ステータスをリセットする
+  async resetUserWinnerStatus(userId) {
+    try {
+      console.log(`Resetting winner status for user ${userId}`);
+      const userRef = ref(database, `users/${userId}`);
+      await update(userRef, { gift: null });
+      return true;
+    } catch (error) {
+      console.error('Error resetting winner status:', error);
+      throw error;
+    }
+  },
+  
   // 初期ユーザーデータをセットアップ
   async setupInitialData() {
     try {
       const initialUsers = {
-        'user1': {
-          sucsessID: "KENTA",
-          primaryID: 323,
-          secoundaryID: 399054,
-          step: 0
+        'user001': {
+          name: "テストユーザー1",
+          sucsessID: "ユーザー1",
+          primaryID: 101,
+          secoundaryID: 10001,
+          step: 0,
+          gift: null
         },
-        'user2': {
-          sucsessID: "YURIKA",
-          primaryID: 604,
-          secoundaryID: 357464,
-          step: 0
+        'user002': {
+          name: "テストユーザー2",
+          sucsessID: "ユーザー2",
+          primaryID: 102,
+          secoundaryID: 10002,
+          step: 1,
+          gift: null
+        },
+        'user003': {
+          name: "テストユーザー3",
+          sucsessID: "ユーザー3",
+          primaryID: 103,
+          secoundaryID: 10003,
+          step: 2,
+          gift: null
+        },
+        'user004': {
+          name: "当選者テスト",
+          sucsessID: "当選者",
+          primaryID: 104,
+          secoundaryID: 10004,
+          step: 3,
+          gift: "True"
         }
       };
       

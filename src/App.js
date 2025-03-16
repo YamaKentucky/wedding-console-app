@@ -69,7 +69,7 @@ function App() {
             const usersWithAvatars = updatedData.users.map(user => ({
               ...user,
               avatar: user.sucsessID ? user.sucsessID.charAt(0) : '?',
-              name: user.sucsessID // 一時的に表示名としてsucsessIDを使用
+              name: user.name || user.sucsessID // 名前フィールドがあれば使用、なければsucsessIDを使用
             }));
             
             setUsers(usersWithAvatars);
@@ -262,11 +262,14 @@ function App() {
         };
         setRecentWinners(prev => [winResult, ...prev].slice(0, 5));
         
-        // ギフトの在庫を減らす
         try {
+          // ユーザーを当選者としてマーク
+          await firebaseService.setUserAsWinner(winner.id);
+          
+          // ギフトの在庫を減らす
           await decreaseGiftStock(finalGift.id);
         } catch (error) {
-          console.error('Failed to update gift stock:', error);
+          console.error('Failed to update after lottery:', error);
         }
       }
     }, 100);

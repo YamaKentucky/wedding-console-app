@@ -3,40 +3,49 @@ import React from 'react';
 function UserListItem({ 
   user, 
   isCurrentUser, 
+  isWinner,
   getStepColor, 
   getStepText, 
   calculateProgress, 
   calculateWinningProbability,
-  totalUsers
+  totalUsers,
+  rank
 }) {
+  const winningProb = calculateWinningProbability(user.step, totalUsers);
+  
   return (
-    <div className={`user-list-item ${isCurrentUser ? 'current-user-item' : ''}`}>
+    <div className={`user-list-item ${isCurrentUser ? 'current-user-item' : ''} ${isWinner ? 'winner-item' : ''}`}>
       <div className="user-item-header">
-        <div className="user-avatar">{user.avatar}</div>
+        <div className="user-rank">{rank}</div>
         <div className="user-info">
-          <div className="user-name">{user.sucsessID}</div>
-          <div className="user-id">ID: {user.primaryID}</div>
+          <div className="user-name">
+            {user.sucsessID}
+            {isWinner && <span className="winner-badge">当選者</span>}
+          </div>
+        </div>
+        <div className="winning-chance">{winningProb}%</div>
+      </div>
+      
+      <div className="status-row">
+        <div className={`status ${getStepColor(user.step)}`}>
+          {getStepText(user.step)}
         </div>
       </div>
       
       <div className="user-progress">
-        <div className="progress-header">
-          <div className={`status ${getStepColor(user.step)}`}>
-            {getStepText(user.step)}
-          </div>
-          <div className="progress-detail">
-            <span className="progress-percent">{calculateProgress(user.step).toFixed(0)}% 完了</span>
-            <span className="progress-chance">当選率 {calculateWinningProbability(user.step, totalUsers)}%</span>
-          </div>
-        </div>
-        
         <div className="progress-container">
           <div 
-            className="progress-bar" 
+            className="progress-bar"
             style={{ width: `${calculateProgress(user.step)}%` }}
           ></div>
         </div>
       </div>
+      
+      {isWinner && 
+        <div className="winner-decoration">
+          <span className="winner-star">★</span>
+        </div>
+      }
     </div>
   );
 }
