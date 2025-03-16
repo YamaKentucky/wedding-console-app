@@ -156,21 +156,21 @@ function App() {
     localStorage.setItem('eligibleOnly', eligibleOnly.toString());
   }, [eligibleOnly]);
 
-  // Firebaseでユーザーを更新する
-  const updateUserStep = async (userId, newStep) => {
-    try {
-      setUpdateStatus({ pending: true, success: null });
-      await firebaseService.updateUser(userId, { step: newStep });
-      setUpdateStatus({ pending: false, success: true });
-      console.log(`User step updated to ${newStep}`);
+  // // Firebaseでユーザーを更新する
+  // const updateUserStep = async (userId, newStep) => {
+  //   try {
+  //     setUpdateStatus({ pending: true, success: null });
+  //     await firebaseService.updateUser(userId, { step: newStep });
+  //     setUpdateStatus({ pending: false, success: true });
+  //     console.log(`User step updated to ${newStep}`);
       
-      return true;
-    } catch (error) {
-      console.error('Error updating user step:', error);
-      setUpdateStatus({ pending: false, success: false });
-      throw error;
-    }
-  };
+  //     return true;
+  //   } catch (error) {
+  //     console.error('Error updating user step:', error);
+  //     setUpdateStatus({ pending: false, success: false });
+  //     throw error;
+  //   }
+  // };
 
   // ギフトの在庫を減らす
   const decreaseGiftStock = async (giftId) => {

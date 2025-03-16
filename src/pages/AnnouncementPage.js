@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import './AnnouncementPage.css';
 import { firebaseService } from '../firebase';
 
@@ -24,9 +24,10 @@ function AnnouncementPage({ users, gifts }) {
     return completedUsers.slice(0, 3);
   }, [users]);
 
-  // 景品の使用状況を更新する関数
-  const markGiftAsUsed = async (rank) => {
-    if (step <= rank) return; // まだその順位を発表していない場合は何もしない
+// 景品の使用状況を更新する関数
+const markGiftAsUsed = async (rank) => {
+    // この条件チェックを削除または修正
+    // if (step <= rank) return; 
     
     const user = getUserByRank(rank);
     const gift = rankGifts[rank];
@@ -209,7 +210,9 @@ function AnnouncementPage({ users, gifts }) {
           </div>
           <div className="gift-details">
             <h4>景品: {gift ? gift.name : "未設定"}</h4>
-            {gift && <p className="gift-price">価格: {gift.price.toLocaleString()}円</p>}
+            {gift && (
+              <p className="gift-stock">残り: {Math.max(0, gift.stock - (rank <= topRankedUsers.length ? 1 : 0))}個</p>
+            )}
           </div>
         </div>
       </div>

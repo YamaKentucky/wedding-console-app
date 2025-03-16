@@ -44,7 +44,7 @@ function UserListItem({
     return 'rank-icon';
   };
   
-  const formattedTime = formatSuccessTime(successTime);
+  // const formattedTime = formatSuccessTime(successTime);
   const isCompleted = user.step === 3; // 達成者かどうか
   
   return (
