@@ -1,0 +1,276 @@
+{
+    "users": {
+        "user001": {
+            "name": "桑原さん",
+            "primaryID": 1,
+            "secoundaryID": 1,
+            "step": 0,
+            "sucsessID": "くわはらさん"
+        },
+        "user002": {
+            "name": "大谷さん",
+            "primaryID": 2,
+            "secoundaryID": 2,
+            "step": 0,
+            "sucsessID": "おおたにさん"
+        },
+        "user003": {
+            "name": "しょうにい",
+            "primaryID": 3,
+            "secoundaryID": 3,
+            "step": 0,
+            "sucsessID": "しょうにい"
+        },
+        "user004": {
+            "name": "よこ",
+            "primaryID": 4,
+            "secoundaryID": 4,
+            "step": 0,
+            "sucsessID": "よこ"
+        },
+        "user005": {
+            "name": "やんまー",
+            "primaryID": 5,
+            "secoundaryID": 5,
+            "step": 0,
+            "sucsessID": "やんまー"
+        },
+        "user006": {
+            "name": "キバ",
+            "primaryID": 6,
+            "secoundaryID": 6,
+            "step": 0,
+            "sucsessID": "きば"
+        },
+        "user007": {
+            "name": "しゅん",
+            "primaryID": 7,
+            "secoundaryID": 7,
+            "step": 0,
+            "sucsessID": "しゅん"
+        },
+        "user008": {
+            "name": "さおりん",
+            "primaryID": 8,
+            "secoundaryID": 8,
+            "step": 0,
+            "sucsessID": "さおりん"
+        },
+        "user009": {
+            "name": "みくちん",
+            "primaryID": 9,
+            "secoundaryID": 9,
+            "step": 0,
+            "sucsessID": "みくちん"
+        },
+        "user010": {
+            "name": "のりちゃん",
+            "primaryID": 10,
+            "secoundaryID": 10,
+            "step": 0,
+            "sucsessID": "のりちゃん"
+        },
+        "user011": {
+            "name": "なゆちん",
+            "primaryID": 11,
+            "secoundaryID": 11,
+            "step": 0,
+            "sucsessID": "なゆちん"
+        },
+        "user012": {
+            "name": "ゆいちゃん",
+            "primaryID": 12,
+            "secoundaryID": 12,
+            "step": 0,
+            "sucsessID": "ゆいちゃん"
+        },
+        "user013": {
+            "name": "ももちゃん",
+            "primaryID": 13,
+            "secoundaryID": 13,
+            "step": 0,
+            "sucsessID": "ももちゃん"
+        },
+        "user014": {
+            "name": "もなみたん",
+            "primaryID": 14,
+            "secoundaryID": 14,
+            "step": 0,
+            "sucsessID": "もなみたん"
+        },
+        "user015": {
+            "name": "よね",
+            "primaryID": 15,
+            "secoundaryID": 15,
+            "step": 0,
+            "sucsessID": "よね"
+        },
+        "user016": {
+            "name": "たじけん",
+            "primaryID": 16,
+            "secoundaryID": 16,
+            "step": 0,
+            "sucsessID": "たじけん"
+        },
+        "user017": {
+            "name": "つばさ",
+            "primaryID": 17,
+            "secoundaryID": 17,
+            "step": 0,
+            "sucsessID": "つばさ"
+        },
+        "user018": {
+            "name": "そらちゃん",
+            "primaryID": 18,
+            "secoundaryID": 18,
+            "step": 0,
+            "sucsessID": "そらちゃん"
+        },
+        "user019": {
+            "name": "まこちゃん",
+            "primaryID": 19,
+            "secoundaryID": 19,
+            "step": 0,
+            "sucsessID": "まこちゃん"
+        },
+        "user020": {
+            "name": "さえ",
+            "primaryID": 20,
+            "secoundaryID": 20,
+            "step": 0,
+            "sucsessID": "さえ"
+        },
+        "user021": {
+            "name": "なかじ",
+            "primaryID": 21,
+            "secoundaryID": 21,
+            "step": 0,
+            "sucsessID": "なかじ"
+        },
+        "user022": {
+            "name": "こばけん",
+            "primaryID": 22,
+            "secoundaryID": 22,
+            "step": 0,
+            "sucsessID": "こばけん"
+        },
+        "user023": {
+            "name": "るっち",
+            "primaryID": 23,
+            "secoundaryID": 23,
+            "step": 0,
+            "sucsessID": "るっち"
+        },
+        "user024": {
+            "name": "たいせい",
+            "primaryID": 24,
+            "secoundaryID": 24,
+            "step": 0,
+            "sucsessID": "たいせい"
+        },
+        "user025": {
+            "name": "るりちゃん",
+            "primaryID": 25,
+            "secoundaryID": 25,
+            "step": 0,
+            "sucsessID": "るりちゃん"
+        },
+        "user026": {
+            "name": "おおにし",
+            "primaryID": 26,
+            "secoundaryID": 26,
+            "step": 0,
+            "sucsessID": "おおにし"
+        },
+        "user027": {
+            "name": "かんちゃん",
+            "primaryID": 27,
+            "secoundaryID": 27,
+            "step": 0,
+            "sucsessID": "かんちゃん"
+        },
+        "user028": {
+            "name": "かつき",
+            "primaryID": 28,
+            "secoundaryID": 28,
+            "step": 0,
+            "sucsessID": "かつき"
+        },
+        "user029": {
+            "name": "かいちゃん",
+            "primaryID": 29,
+            "secoundaryID": 29,
+            "step": 0,
+            "sucsessID": "かいちゃん"
+        },
+        "user030": {
+            "name": "あおさん",
+            "primaryID": 30,
+            "secoundaryID": 30,
+            "step": 0,
+            "sucsessID": "あおさん"
+        },
+        "user031": {
+            "name": "あやちゃん",
+            "primaryID": 31,
+            "secoundaryID": 31,
+            "step": 0,
+            "sucsessID": "あやちゃん"
+        },
+        "user032": {
+            "name": "まこちゃん",
+            "primaryID": 32,
+            "secoundaryID": 32,
+            "step": 0,
+            "sucsessID": "まこちゃん"
+        },
+        "user033": {
+            "name": "いが",
+            "primaryID": 33,
+            "secoundaryID": 33,
+            "step": 0,
+            "sucsessID": "いが"
+        },
+        "user034": {
+            "name": "わたかべちゃん",
+            "primaryID": 34,
+            "secoundaryID": 34,
+            "step": 0,
+            "sucsessID": "わたかべちゃん"
+        },
+        "user035": {
+            "name": "めぐたん",
+            "primaryID": 35,
+            "secoundaryID": 35,
+            "step": 0,
+            "sucsessID": "めぐたん"
+        },
+        "user036": {
+            "name": "そーたん",
+            "primaryID": 36,
+            "secoundaryID": 36,
+            "step": 0,
+            "sucsessID": "そーたん"
+        }
+    },
+    "gifts": {
+        "gift001": {
+            "name": "ランドリーセット",
+            "price": 6400,
+            "stock": 1,
+            "imgKey":"01_SHIRO_homeSet.webp"
+        },
+        "gift002": {
+            "name": "柔軟剤",
+            "price": 200,
+            "stock": 10,
+            "imgKey":"スクリーンショット 2024-10-05 130709.png"
+        },
+        "gift003": {
+            "name": "お肉",
+            "price": 300,
+            "stock": 10,
+            "imgKey":"スクリーンショット 2024-10-05 130709.png"
+        }
+    }
+}

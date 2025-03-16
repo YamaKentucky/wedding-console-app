@@ -455,3 +455,206 @@
     min-height: 180px;
   }
 }
+
+/* ギフト画像スタイル - GiftDisplay用 */
+.gift-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  border: 1px solid #eee;
+  transition: transform 0.3s ease;
+}
+
+.gift-image:hover {
+  transform: scale(1.05);
+}
+
+.gift-icon {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.2rem;
+  position: relative;
+}
+
+.gift-image-error {
+  font-size: 3.5rem;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ギフトリスト画像 - GiftList用 */
+.gift-list-image {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 6px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border: 1px solid #eee;
+  background-color: #fff;
+}
+
+.gift-list-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.75rem;
+  font-size: 1.8rem;
+  width: 40px;
+  height: 40px;
+}
+
+/* 当選履歴のミニギフト画像 - RecentWinners用 */
+.gift-mini-image {
+  width: 20px;
+  height: 20px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-right: 4px;
+  vertical-align: middle;
+  border: 1px solid #eee;
+  background-color: #fff;
+}
+
+.gift-emoji {
+  margin-right: 0.25rem;
+  display: flex;
+  align-items: center;
+}
+
+/* 大きな画像サイズのギフト - GiftDisplay用 */
+.gift-image-large {
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  border: 1px solid #eee;
+  transition: transform 0.3s ease;
+  margin-bottom: 15px;
+}
+
+.gift-image-large:hover {
+  transform: scale(1.05);
+}
+
+.gift-icon-large {
+  width: 140px;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.2rem;
+  position: relative;
+}
+
+.gift-emoji-large {
+  font-size: 5rem;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ギフトリスト大きな画像 - GiftList用 */
+.gift-list-image-large {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #eee;
+  background-color: #fff;
+  margin-bottom: 10px;
+}
+
+.gift-list-icon-large {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+  width: 80px;
+  height: 80px;
+}
+
+/* ギフトリストアイテムのレイアウト調整 */
+.gift-list-item {
+  padding: 1rem;
+  border-radius: 8px;
+  background-color: #fff;
+  border-left: 4px solid #ff9800;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  padding: 1.5rem;
+}
+
+.gift-list-name {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-top: 0.5rem;
+}
+
+/* 当選者カードレイアウト調整 */
+.winner-card, .gift-card, .no-winner-message, .no-gift-message {
+  padding: 1.5rem;
+  height: auto;
+  min-height: 280px;
+}
+
+/* ギフトリストグリッドレイアウト */
+.gift-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+/* 抽選画面のレイアウト調整 */
+.lottery-row {
+  gap: 3rem;
+}
+
+/* 景品名のスタイル */
+.gift-name {
+  font-size: 1.6rem;
+  font-weight: bold;
+  margin-top: 0.5rem;
+  color: #333;
+  text-align: center;
+}
+
+/* パネルヘッダーのスタイル */
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.8rem;
+}
+
+.panel-header h2 {
+  margin: 0;
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.panel-header h2::after {
+  display: none;
+}
+
+.target-count {
+  font-size: 0.9rem;
+  padding: 0.3rem 0.8rem;
+  background-color: #f0f0f0;
+  border-radius: 20px;
+  color: #333;
+  font-weight: 500;
+}
+

@@ -20,7 +20,7 @@
   left: 0;
   right: 0;
   height: 15px;
-  background: linear-gradient(to bottom, rgba(255,255,255,0.95), rgba(255,255,255,0));
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0));
   z-index: 1;
   pointer-events: none;
 }
@@ -32,7 +32,7 @@
   left: 0;
   right: 0;
   height: 15px;
-  background: linear-gradient(to top, rgba(255,255,255,0.95), rgba(255,255,255,0));
+  background: linear-gradient(to top, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0));
   z-index: 1;
   pointer-events: none;
 }
@@ -89,7 +89,8 @@
 
 /* 上位3名のランキング特別スタイル */
 .user-list-item:nth-child(1) .user-rank {
-  background-color: #ffd700; /* 金色：1位 */
+  background-color: #ffd700;
+  /* 金色：1位 */
   color: #333;
   min-width: 30px;
   height: 30px;
@@ -97,12 +98,14 @@
 }
 
 .user-list-item:nth-child(2) .user-rank {
-  background-color: #c0c0c0; /* 銀色：2位 */
+  background-color: #c0c0c0;
+  /* 銀色：2位 */
   color: #333;
 }
 
 .user-list-item:nth-child(3) .user-rank {
-  background-color: #cd7f32; /* 銅色：3位 */
+  background-color: #cd7f32;
+  /* 銅色：3位 */
 }
 
 /* アイテムのスタイル */
@@ -137,8 +140,13 @@
 }
 
 @keyframes winner-glow {
-  from { box-shadow: 0 3px 12px rgba(255, 193, 7, 0.2); }
-  to { box-shadow: 0 5px 15px rgba(255, 193, 7, 0.5); }
+  from {
+    box-shadow: 0 3px 12px rgba(255, 193, 7, 0.2);
+  }
+
+  to {
+    box-shadow: 0 5px 15px rgba(255, 193, 7, 0.5);
+  }
 }
 
 .winner-badge {
@@ -155,8 +163,13 @@
 }
 
 @keyframes pulse-winner {
-  from { opacity: 0.7; }
-  to { opacity: 1; }
+  from {
+    opacity: 0.7;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .winner-decoration {
@@ -180,8 +193,13 @@
 }
 
 @keyframes winner-star-rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .user-item-header {
@@ -261,4 +279,77 @@
   height: 100%;
   background-image: linear-gradient(90deg, #3f51b5, #9c27b0);
   transition: width 0.3s ease;
+}
+
+/* 謎解き達成者の順位表示 */
+.completed-rank {
+  font-size: 0.85rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 12px;
+  background-color: #d1c4e9;
+  /* 達成ステータスと同じ紫色の背景 */
+  color: #512da8;
+  margin-left: 0.5rem;
+  font-weight: bold;
+  display: inline-block;
+  vertical-align: middle;
+  box-shadow: 0 1px 3px rgba(81, 45, 168, 0.2);
+}
+
+/* サイドバーのタイトル更新 */
+.users-sidebar .panel h2 {
+  margin-top: 0;
+  font-size: 1.4rem;
+  color: #333;
+  margin-bottom: 1.2rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.8rem;
+  position: relative;
+}
+
+.users-sidebar .panel h2::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(90deg, #3f51b5, #7e57c2);
+  border-radius: 2px;
+}
+
+/* ランキングアイコンのスタイル */
+.rank-icon {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7e57c2, #512da8);
+  color: white;
+  font-weight: bold;
+  font-size: 0.9rem;
+  margin-right: 0.75rem;
+  box-shadow: 0 2px 5px rgba(81, 45, 168, 0.3);
+  border: 2px solid #fff;
+}
+
+/* 上位3位のランキングアイコン特別スタイル */
+.rank-icon-1 {
+  background: linear-gradient(135deg, #ffd700, #daa520);
+  color: #5d4037;
+  box-shadow: 0 2px 6px rgba(218, 165, 32, 0.4);
+}
+
+.rank-icon-2 {
+  background: linear-gradient(135deg, #e0e0e0, #9e9e9e);
+  color: #424242;
+  box-shadow: 0 2px 6px rgba(158, 158, 158, 0.4);
+}
+
+.rank-icon-3 {
+  background: linear-gradient(135deg, #d7ccc8, #8d6e63);
+  color: #3e2723;
+  box-shadow: 0 2px 6px rgba(141, 110, 99, 0.4);
 }

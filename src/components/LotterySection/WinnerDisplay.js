@@ -9,7 +9,7 @@ function WinnerDisplay({ winner, isSpinningUser, getStepText, getStepColor }) {
           <div className={`winner-card ${isSpinningUser ? 'spinning' : ''}`}>
             <div className="winner-avatar">{winner.avatar}</div>
             <div className="winner-name">{winner.sucsessID}</div>
-            <div className="winner-id">ID: {winner.primaryID}</div>
+            {/* <div className="winner-id">ID: {winner.primaryID}</div> */}
             <div className={`status ${getStepColor(winner.step)}`}>
               {getStepText(winner.step)}
             </div>

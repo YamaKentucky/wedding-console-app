@@ -9,9 +9,25 @@ function UsersSidebar({
   getStepColor, 
   calculateProgress, 
   calculateWinningProbability,
-  autoScrollEnabled // 設定ページから渡される自動スクロール設定
+  autoScrollEnabled
 }) {
   const listRef = useRef(null);
+  
+  // 謎解きを達成した人のランキングを計算
+  const completedRanking = useMemo(() => {
+    // step = 3の人だけを抽出し、名前でソート
+    const completedUsers = [...users]
+      .filter(user => user.step === 3)
+      .sort((a, b) => a.sucsessID?.localeCompare(b.sucsessID) || 0);
+      
+    // 順位をマップに保存 {userId: rank}
+    const rankMap = {};
+    completedUsers.forEach((user, index) => {
+      rankMap[user.id] = index + 1;
+    });
+    
+    return rankMap;
+  }, [users]);
   
   // ユーザーをソート：
   // 1. 進捗（step）の降順でソート
@@ -26,7 +42,7 @@ function UsersSidebar({
       // 進捗が同じ場合は名前でソート（昇順）
       return a.sucsessID?.localeCompare(b.sucsessID) || 0;
     });
-  }, [users]); // usersが変更された時のみ再計算
+  }, [users]);
   
   // 自動スクロール機能
   useEffect(() => {
@@ -76,16 +92,16 @@ function UsersSidebar({
       clearTimeout(autoScrollTimer);
       if (scrollInterval) clearInterval(scrollInterval);
     };
-  }, [sortedUsers.length, autoScrollEnabled]); // ユーザー数または自動スクロール設定が変わった時に再設定
+  }, [sortedUsers.length, autoScrollEnabled]);
   
   return (
     <div className="users-sidebar">
       <div className="panel">
-        <h2>謎解き達成ランキング</h2>
+        <h2>謎解きチャレンジ参加者</h2>
         
         <div className="users-list-container">
           <div className={`users-list ${!autoScrollEnabled ? 'manual-scroll' : ''}`} ref={listRef}>
-            {sortedUsers.map((user, index) => (
+            {sortedUsers.map((user) => (
               <UserListItem
                 key={`${user.id}`}
                 user={user}
@@ -96,7 +112,8 @@ function UsersSidebar({
                 calculateProgress={calculateProgress}
                 calculateWinningProbability={calculateWinningProbability}
                 totalUsers={users.length}
-                rank={index + 1}
+                hideRank={true} // 通常のランキングは非表示
+                completedRank={user.step === 3 ? completedRanking[user.id] : null} // 達成者のみランクを表示
               />
             ))}
           </div>

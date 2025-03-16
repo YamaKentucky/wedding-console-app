@@ -9,14 +9,16 @@ const TABS = {
   RESULTS: 'results',
   INFO: 'info',
   GIFTS: 'gifts',
-  DISPLAY: 'display'  // 新しい表示設定タブ
+  DISPLAY: 'display'  // 表示設定タブ
 };
 
 function SettingsPage({
   gifts,
   recentWinners,
   autoScrollEnabled, 
-  setAutoScrollEnabled  // 親コンポーネントから渡される設定変更用の関数
+  setAutoScrollEnabled,
+  eligibleOnly,       // 謎解き参加者のみを抽選に含めるかどうかの設定
+  setEligibleOnly     // 設定を変更する関数
 }) {
   // 現在選択されているタブ (初期値: 抽選結果)
   const [activeTab, setActiveTab] = useState(TABS.RESULTS);
@@ -60,6 +62,13 @@ function SettingsPage({
     setAutoScrollEnabled(!autoScrollEnabled);
     // ローカルストレージに設定を保存
     localStorage.setItem('autoScrollEnabled', (!autoScrollEnabled).toString());
+  };
+
+  // 謎解き参加者フィルタの切り替え
+  const toggleEligibleOnly = () => {
+    setEligibleOnly(!eligibleOnly);
+    // ローカルストレージに設定を保存
+    localStorage.setItem('eligibleOnly', (!eligibleOnly).toString());
   };
 
   return (
@@ -174,7 +183,7 @@ function SettingsPage({
             </div>
           )}
 
-          {/* 表示設定タブ（新規追加） */}
+          {/* 表示設定タブ */}
           {activeTab === TABS.DISPLAY && (
             <div className="tab-pane display-pane">
               <h2>表示設定</h2>
@@ -199,6 +208,31 @@ function SettingsPage({
                     </label>
                     <span className="toggle-status">
                       {autoScrollEnabled ? '有効' : '無効'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="settings-section">
+                <h3>抽選設定</h3>
+                
+                <div className="setting-item">
+                  <div className="setting-description">
+                    <h4>謎解き参加者のみ抽選対象</h4>
+                    <p>謎解きに参加している方（進捗度が1以上のユーザー）のみを抽選対象とするかどうかを設定します。</p>
+                  </div>
+                  
+                  <div className="setting-control">
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={eligibleOnly} 
+                        onChange={toggleEligibleOnly}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                    <span className="toggle-status">
+                      {eligibleOnly ? '有効' : '無効'}
                     </span>
                   </div>
                 </div>

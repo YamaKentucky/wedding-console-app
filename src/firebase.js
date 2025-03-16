@@ -1,18 +1,18 @@
 // Firebase設定ファイル
 import { initializeApp } from 'firebase/app';
-import { getDatabase, ref, set, update, onValue, get } from 'firebase/database';
+import { getDatabase, ref, set, update, onValue, get, push } from 'firebase/database';
 
 // Firebaseの設定情報
 const firebaseConfig = {
-    apiKey: "AIzaSyAXheKu9SorK0jvsJ8sJzrllPXwWZxMKAI",
-    authDomain: "pj-test-1c30f.firebaseapp.com",
-    databaseURL: "https://pj-test-1c30f-default-rtdb.firebaseio.com",
-    projectId: "pj-test-1c30f",
-    storageBucket: "pj-test-1c30f.firebasestorage.app",
-    messagingSenderId: "462050565009",
-    appId: "1:462050565009:web:360f11d2ea1ae14c71d830",
-    measurementId: "G-FKFZM91NXR"
-  };
+  apiKey: "AIzaSyAXheKu9SorK0jvsJ8sJzrllPXwWZxMKAI",
+  authDomain: "pj-test-1c30f.firebaseapp.com",
+  databaseURL: "https://pj-test-1c30f-default-rtdb.firebaseio.com",
+  projectId: "pj-test-1c30f",
+  storageBucket: "pj-test-1c30f.firebasestorage.app",
+  messagingSenderId: "462050565009",
+  appId: "1:462050565009:web:360f11d2ea1ae14c71d830",
+  measurementId: "G-FKFZM91NXR"
+};
 
 // Firebaseの初期化
 const app = initializeApp(firebaseConfig);
@@ -41,7 +41,7 @@ export const firebaseService = {
     try {
       const usersRef = ref(database, 'users');
       const snapshot = await get(usersRef);
-      
+
       if (snapshot.exists()) {
         const data = snapshot.val();
         return Object.entries(data).map(([id, userData]) => ({
@@ -55,13 +55,13 @@ export const firebaseService = {
       throw error;
     }
   },
-  
+
   // ギフトデータを取得
   async getAllGifts() {
     try {
       const giftsRef = ref(database, 'gifts');
       const snapshot = await get(giftsRef);
-      
+
       if (snapshot.exists()) {
         const data = snapshot.val();
         return Object.entries(data).map(([id, giftData]) => ({
@@ -69,11 +69,11 @@ export const firebaseService = {
           ...giftData
         }));
       }
-      
+
       // ギフトデータがなければ初期データをセットアップ
       await this.setupInitialGifts();
       const initialSnapshot = await get(giftsRef);
-      
+
       if (initialSnapshot.exists()) {
         const data = initialSnapshot.val();
         return Object.entries(data).map(([id, giftData]) => ({
@@ -81,28 +81,47 @@ export const firebaseService = {
           ...giftData
         }));
       }
-      
+
       return [];
     } catch (error) {
       console.error('Error fetching gifts:', error);
       throw error;
     }
   },
-  
+
+  // 抽選ログを取得
+  async getLotteryLogs() {
+    try {
+      const logsRef = ref(database, 'lotteryLogs');
+      const snapshot = await get(logsRef);
+
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        return Object.values(data).sort((a, b) =>
+          new Date(b.timestamp) - new Date(a.timestamp)
+        );
+      }
+      return [];
+    } catch (error) {
+      console.error('Error fetching lottery logs:', error);
+      throw error;
+    }
+  },
+
   // ユーザーとギフトをリアルタイムで監視（チャタリング対策あり）
   watchUsersAndGifts(callback) {
     const rootRef = ref(database);
-    
+
     // デバウンスされたコールバック関数
     const debouncedCallback = debounce((result) => {
       callback(result);
     }, 300); // 300ms間に複数の更新があった場合、最後の更新のみを処理
-    
+
     return onValue(rootRef, (snapshot) => {
       if (snapshot.exists()) {
         const data = snapshot.val();
         const result = {};
-        
+
         // ユーザーデータがあれば処理
         if (data.users) {
           result.users = Object.entries(data.users).map(([id, userData]) => ({
@@ -110,7 +129,7 @@ export const firebaseService = {
             ...userData
           }));
         }
-        
+
         // ギフトデータがあれば処理
         if (data.gifts) {
           result.gifts = Object.entries(data.gifts).map(([id, giftData]) => ({
@@ -118,7 +137,12 @@ export const firebaseService = {
             ...giftData
           }));
         }
-        
+
+        // 抽選ログがあれば処理
+        if (data.lotteryLogs) {
+          result.lotteryLogs = data.lotteryLogs;
+        }
+
         debouncedCallback(result);
       } else {
         debouncedCallback({});
@@ -128,7 +152,7 @@ export const firebaseService = {
       debouncedCallback({});
     });
   },
-  
+
   // 新しいユーザーデータを保存
   async saveUser(userId, userData) {
     try {
@@ -140,7 +164,7 @@ export const firebaseService = {
       throw error;
     }
   },
-  
+
   // 新しいギフトデータを保存
   async saveGift(giftId, giftData) {
     try {
@@ -152,7 +176,40 @@ export const firebaseService = {
       throw error;
     }
   },
-  
+
+  // 抽選ログを追加
+  async addLotteryLog(logData) {
+    try {
+      // ログデータを整形
+      const logEntry = {
+        user: {
+          id: logData.user.id,
+          sucsessID: logData.user.sucsessID,
+          primaryID: logData.user.primaryID,
+          avatar: logData.user.avatar || logData.user.sucsessID.charAt(0),
+          step: logData.user.step
+        },
+        gift: {
+          id: logData.gift.id,
+          name: logData.gift.name,
+          price: logData.gift.price,
+          imgKey: logData.gift.imgKey // S3の画像キーを保存
+        },
+        timestamp: logData.timestamp || new Date().toISOString()
+      };
+      
+      const logsRef = ref(database, 'lotteryLogs');
+      // pushを使用して一意のIDでログを追加
+      const newLogRef = push(logsRef);
+      await set(newLogRef, logEntry);
+      console.log('Lottery log added:', logEntry);
+      return true;
+    } catch (error) {
+      console.error('Error adding lottery log:', error);
+      throw error;
+    }
+  },
+
   // ユーザーデータを更新
   async updateUser(userId, updates) {
     try {
@@ -165,7 +222,7 @@ export const firebaseService = {
       throw error;
     }
   },
-  
+
   // ギフトデータを更新
   async updateGift(giftId, updates) {
     try {
@@ -178,7 +235,7 @@ export const firebaseService = {
       throw error;
     }
   },
-  
+
   // ユーザーを当選者に設定する
   async setUserAsWinner(userId) {
     try {
@@ -191,7 +248,7 @@ export const firebaseService = {
       throw error;
     }
   },
-  
+
   // ユーザーの当選ステータスをリセットする
   async resetUserWinnerStatus(userId) {
     try {
@@ -204,7 +261,7 @@ export const firebaseService = {
       throw error;
     }
   },
-  
+
   // 初期ユーザーデータをセットアップ
   async setupInitialData() {
     try {
@@ -242,7 +299,7 @@ export const firebaseService = {
           gift: "True"
         }
       };
-      
+
       const usersRef = ref(database, 'users');
       await set(usersRef, initialUsers);
       return true;
@@ -251,7 +308,7 @@ export const firebaseService = {
       throw error;
     }
   },
-  
+
   // 初期ギフトデータをセットアップ
   async setupInitialGifts() {
     try {
@@ -272,7 +329,7 @@ export const firebaseService = {
           stock: 10
         }
       };
-      
+
       const giftsRef = ref(database, 'gifts');
       await set(giftsRef, initialGifts);
       return true;

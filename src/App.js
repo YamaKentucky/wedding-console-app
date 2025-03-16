@@ -28,7 +28,11 @@ function App() {
   const [winner, setWinner] = useState(null);
   const [selectedGift, setSelectedGift] = useState(null);
   const [recentWinners, setRecentWinners] = useState([]);
-  const [eligibleOnly, setEligibleOnly] = useState(false);
+  // ローカルストレージから抽選設定を読み込む（デフォルトは無効）
+  const [eligibleOnly, setEligibleOnly] = useState(() => {
+    const savedSetting = localStorage.getItem('eligibleOnly');
+    return savedSetting !== null ? savedSetting === 'true' : false;
+  });
   const [updateStatus, setUpdateStatus] = useState({ pending: false, success: null });
   
   // 表示設定の状態
@@ -69,6 +73,17 @@ function App() {
           // ギフトデータが取得できなくても、アプリは継続する
         }
         
+        // 抽選履歴を取得
+        try {
+          const lotteryLogs = await firebaseService.getLotteryLogs();
+          if (lotteryLogs && lotteryLogs.length > 0) {
+            // 最新のログを先頭に表示
+            setRecentWinners(lotteryLogs.slice(0, 5));
+          }
+        } catch (logError) {
+          console.error('抽選履歴の取得エラー:', logError);
+        }
+        
         // リアルタイム監視を設定
         const unsubscribe = firebaseService.watchUsersAndGifts((updatedData) => {
           console.log('Realtime update received:', updatedData);
@@ -102,6 +117,17 @@ function App() {
           if (updatedData.gifts) {
             setGifts(updatedData.gifts);
           }
+          
+          // 抽選ログの更新
+          if (updatedData.lotteryLogs) {
+            const logsArray = Object.values(updatedData.lotteryLogs);
+            if (logsArray.length > 0) {
+              // 最新のログを先頭に表示（最大5件）
+              setRecentWinners(logsArray.sort((a, b) => 
+                new Date(b.timestamp) - new Date(a.timestamp)
+              ).slice(0, 5));
+            }
+          }
         });
         
         setLoading(false);
@@ -124,6 +150,10 @@ function App() {
   useEffect(() => {
     localStorage.setItem('autoScrollEnabled', autoScrollEnabled.toString());
   }, [autoScrollEnabled]);
+
+  useEffect(() => {
+    localStorage.setItem('eligibleOnly', eligibleOnly.toString());
+  }, [eligibleOnly]);
 
   // Firebaseでユーザーを更新する
   const updateUserStep = async (userId, newStep) => {
@@ -160,77 +190,61 @@ function App() {
   };
 
   // 当選者を抽選する関数
-  const startUserLottery = () => {
-    setIsSpinningUser(true);
-    setWinner(null);
-    setSelectedGift(null);
-    
-    // チェックボックスが選択されている場合は対象ユーザーのみをフィルタリング
-    const eligibleUsers = eligibleOnly
-      ? users.filter(user => user.step >= 1)
-      : users;
-    
-    if (eligibleUsers.length === 0) {
-      setTimeout(() => {
-        setIsSpinningUser(false);
-        // 対象ユーザーなし
-        return;
-      }, 2000);
+const startUserLottery = () => {
+  setIsSpinningUser(true);
+  setWinner(null);
+  setSelectedGift(null);
+  
+  // 設定に基づいて対象ユーザーをフィルタリング
+  // さらに、すでに当選者になっているユーザーを除外する
+  let eligibleUsers = eligibleOnly
+    ? users.filter(user => user.step >= 1) // 謎解き参加者のみをフィルタリング
+    : users; // すべてのユーザーを対象
+  
+  // すでに当選者になっているユーザーを除外
+  eligibleUsers = eligibleUsers.filter(user => user.gift !== "True");
+
+  console.log(`抽選対象者: ${eligibleUsers.length}人 (謎解き参加者のみ: ${eligibleOnly}, 過去当選者除外)`);
+  
+  if (eligibleUsers.length === 0) {
+    setTimeout(() => {
+      setIsSpinningUser(false);
+      alert('抽選対象となるユーザーがいません');
       return;
-    }
+    }, 2000);
+    return;
+  }
+  
+  // アニメーション効果：ユーザーを高速で循環表示
+  let counter = 0;
+  const cycleUsers = setInterval(async () => {
+    const randomIndex = Math.floor(Math.random() * eligibleUsers.length);
+    setWinner(eligibleUsers[randomIndex]);
+    counter++;
     
-    // アニメーション効果：ユーザーを高速で循環表示
-    let counter = 0;
-    const cycleUsers = setInterval(async () => {
-      const randomIndex = Math.floor(Math.random() * eligibleUsers.length);
-      setWinner(eligibleUsers[randomIndex]);
-      counter++;
+    if (counter > 15) {
+      clearInterval(cycleUsers);
+      setIsSpinningUser(false);
       
-      if (counter > 15) {
-        clearInterval(cycleUsers);
-        setIsSpinningUser(false);
-        
-        // 当選確率に影響を与える（進捗度が高いほど当選しやすい）
-        const weightedUsers = [];
-        eligibleUsers.forEach(user => {
-          // ステップに応じて配列に複数回追加（重み付け）
-          const weight = user.step + 1; // ステップ0でも最低1回は追加
-          for (let i = 0; i < weight; i++) {
-            weightedUsers.push(user);
-          }
-        });
-        
-        // 重み付けされた配列からランダムに選択
-        const finalIndex = Math.floor(Math.random() * weightedUsers.length);
-        const finalWinner = weightedUsers[finalIndex];
-        
-        setWinner(finalWinner);
-        
-        // 当選者の進捗ステップを増加（Firebaseにも反映）
-        if (finalWinner.step < 3) {
-          const newStep = finalWinner.step + 1;
-          try {
-            await updateUserStep(finalWinner.id, newStep);
-            
-            // 当選者の状態を更新（表示用）
-            setWinner({
-              ...finalWinner,
-              step: newStep
-            });
-            
-            // ローカルのユーザーリストも更新
-            setUsers(prevUsers => 
-              prevUsers.map(user => 
-                user.id === finalWinner.id ? { ...user, step: newStep } : user
-              )
-            );
-          } catch (error) {
-            console.error('Failed to update winner step:', error);
-          }
+      // 当選確率に影響を与える（進捗度が高いほど当選しやすい）
+      const weightedUsers = [];
+      eligibleUsers.forEach(user => {
+        // ステップに応じて配列に複数回追加（重み付け）
+        const weight = user.step + 1; // ステップ0でも最低1回は追加
+        for (let i = 0; i < weight; i++) {
+          weightedUsers.push(user);
         }
-      }
-    }, 100);
-  };
+      });
+      
+      // 重み付けされた配列からランダムに選択
+      const finalIndex = Math.floor(Math.random() * weightedUsers.length);
+      const finalWinner = weightedUsers[finalIndex];
+      
+      setWinner(finalWinner);
+      console.log(`当選者: ${finalWinner.sucsessID} (進捗度: ${finalWinner.step})`);
+    }
+  }, 100);
+};
 
   // ギフトを抽選する関数
   const startGiftLottery = () => {
@@ -269,13 +283,17 @@ function App() {
         const finalGift = availableGifts[Math.floor(Math.random() * availableGifts.length)];
         setSelectedGift(finalGift);
         
-        // 当選結果を履歴に追加
+        // 当選結果を生成
         const winResult = {
           user: winner,
-          gift: finalGift,
+          gift: {
+            id: finalGift.id,
+            name: finalGift.name,
+            price: finalGift.price,
+            imgKey: finalGift.imgKey // S3の画像キーを保存
+          },
           timestamp: new Date().toISOString()
         };
-        setRecentWinners(prev => [winResult, ...prev].slice(0, 5));
         
         try {
           // ユーザーを当選者としてマーク
@@ -283,6 +301,14 @@ function App() {
           
           // ギフトの在庫を減らす
           await decreaseGiftStock(finalGift.id);
+          
+          // Firebaseに抽選ログを追加
+          await firebaseService.addLotteryLog(winResult);
+          
+          // 当選結果を履歴に追加
+          setRecentWinners(prev => [winResult, ...prev].slice(0, 5));
+          
+          console.log(`景品決定: ${finalGift.name}`);
         } catch (error) {
           console.error('Failed to update after lottery:', error);
         }

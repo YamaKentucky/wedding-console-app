@@ -26,11 +26,23 @@ function LotterySection({
   // メインページでは詳細情報をを表示しない（設定ページに移動）
   showDetailsInMain = false
 }) {
+  // 設定に基づいて抽選対象者数を計算
+  // 1. eligibleOnly=true の場合、謎解き参加者（step >= 1）かつ非当選者
+  // 2. eligibleOnly=false の場合、すべての非当選者
+  const targetUsers = eligibleOnly
+    ? users.filter(user => user.step >= 1 && user.gift !== "True")
+    : users.filter(user => user.gift !== "True");
+    
+  const targetCount = targetUsers.length;
+
   return (
     <div className="lottery-section">
       {/* メイン抽選パネル */}
       <div className="panel lottery-panel">
-        <h2>ラッキードロー</h2>
+        <div className="panel-header">
+          <h2>抽選結果</h2>
+          <div className="target-count">抽選対象: {targetCount}人</div>
+        </div>
 
         <div className="lottery-content">
           <div className="lottery-row">
